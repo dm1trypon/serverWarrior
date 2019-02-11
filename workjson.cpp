@@ -44,3 +44,16 @@ QString WorkJson::toJsonError(QString error)
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
     return data;
 }
+
+QString WorkJson::toJsonConnection(QString nickname, int idPlayer, QMap <QString, qreal> positionPlayer)
+{
+    QJsonObject dataJsonObj;
+    dataJsonObj.insert("method", "connection");
+    dataJsonObj.insert("nickname", nickname);
+    dataJsonObj.insert("id_player", idPlayer);
+    dataJsonObj.insert("nickname", nickname);
+    dataJsonObj.insert("nickname", nickname);
+    QJsonDocument dataJsonDoc(dataJsonObj);
+    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+    return data;
+}

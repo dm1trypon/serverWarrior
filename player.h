@@ -2,14 +2,16 @@
 #define PLAYER_H
 
 #include <QObject>
+#include <QMap>
 
 class Player : public QObject
 {
     Q_OBJECT
 
 public:
-    Player(qreal posX, qreal posY, qreal speedX, qreal speedY, QString nickname, int id, QObject *parent = nullptr);
+    Player(QMap <QString, int> position, qreal speedX, qreal speedY, QString nickname, int id, QObject *parent = nullptr);
 
+    QString getNickname();
 private:
     qreal _posX;
     qreal _posY;

@@ -1,4 +1,4 @@
-#include "server.h"
+﻿#include "server.h"
 #include "player.h"
 
 #include <QWebSocket>
@@ -10,7 +10,7 @@ Server::Server(quint16 port, QObject *parent) :
                                                QWebSocketServer::NonSecureMode, this))
 {
     if (!_webSocketServer->listen(QHostAddress::Any, port)) {
-        qDebug() << "Failed to start a websocket server!";
+        qWarning() << "Failed to start a websocket server!";
         return;
     }
 
@@ -23,7 +23,7 @@ Server::~Server()
 {
     qDebug() << "Stop server...";
     _webSocketServer->close();
-    qDeleteAll(clientsList.begin(), clientsList.end());
+    qDeleteAll(_clientsList.begin(), _clientsList.end());
 }
 
 void Server::onNewConnection()
@@ -35,7 +35,7 @@ void Server::onNewConnection()
 
     pSocket->sendTextMessage(_workJson.toJson("verify"));
 
-    clientsList << pSocket;
+    _clientsList << pSocket;
 }
 
 void Server::processTextMessage(QString data)
@@ -50,23 +50,65 @@ void Server::processTextMessage(QString data)
 
         if (_gameObjects.isExistPlayer(nickname))
         {
+            qWarning() << "Nickname already use!";
             pClient->sendTextMessage(_workJson.toJsonError("Nickname already use!"));
-            clientsList.removeAll(pClient);
+            _clientsList.removeAll(pClient);
             pClient->deleteLater();
             return;
         }
 
-        _gameObjects.toPlayers(nickname, new Player(100, 100, 0, 0, nickname, _gameObjects.generateId()));
+        _nameClients.insert(pClient, nickname);
+        int idPlayer = _gameObjects.generateId();
+        QMap <QString, qreal> positionPlayer = _gameObjects.generateXY();
+        _gameObjects.toPlayers(nickname, new Player(_gameObjects.generateXY(), 0, 0, nickname, idPlayer), APPEND);
+        sendAll(_workJson.toJsonConnection(nickname, idPlayer, positionPlayer));
+    }
+}
+
+void Server::sendAll(QString data)
+{
+    foreach (QWebSocket* client, _clientsList)
+    {
+        qDebug().noquote() << "Send all clients:" << data;
+        client->sendTextMessage(data);
     }
 }
 
 void Server::socketDisconnected()
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-    qDebug() << "socketDisconnected:" << pClient;
+
+    qDebug() << "Process disconnect client from socket and remove player from players list:" << pClient;
+
+    QString nickname;
+
+    if (!_nameClients.contains(pClient))
+    {
+        qWarning() << "Warning! Client is not exist in clients list:" << pClient;
+        return;
+    }
+
+    nickname = _nameClients[pClient];
+
+    qDebug() << "Remove client...:" << pClient;
+    _nameClients.remove(pClient);
+
+    qDebug() << "Remove player...:" << nickname;
+
+    if (!_gameObjects.isExistPlayer(nickname))
+    {
+        qWarning() << "Warning! Player is not exist in players list:" << nickname;
+        return;
+    }
+
+    QMap <QString, QObject *> players = _gameObjects.getPlayers();
+
+    _gameObjects.toPlayers(nickname, players[nickname], REMOVE);
 
     if (pClient) {
-        clientsList.removeAll(pClient);
+        _clientsList.removeAll(pClient);
         pClient->deleteLater();
     }
+
+    qDebug() << "Done!";
 }

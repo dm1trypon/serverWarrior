@@ -5,6 +5,7 @@
 #include "workjson.h"
 
 #include <QWebSocketServer>
+#include <QMap>
 
 QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -26,8 +27,12 @@ private slots:
     void socketDisconnected();
 
 private:
+    const bool REMOVE = false;
+    const bool APPEND = true;
+
     QWebSocketServer *_webSocketServer;
-    QList<QWebSocket *> clientsList;
+    QMap <QWebSocket *, QString> _nameClients;
+    QList <QWebSocket *> _clientsList;
     GameObjects _gameObjects;
     WorkJson _workJson;
 };

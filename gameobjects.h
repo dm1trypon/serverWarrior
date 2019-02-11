@@ -11,11 +11,13 @@ class GameObjects : public QObject
 public:
     GameObjects(QObject *parent = nullptr);
     bool isExistPlayer(QString nickname);
-    void toPlayers(QString nickname, QObject *player);
+    void toPlayers(QString nickname, QObject *player, bool operation);
 
     int generateId();
+    QMap<QString, int> generateXY();
+    QMap<QString, QObject *> getPlayers();
 private:
-    QMap <QString, QObject*> players;
+    QMap <QString, QObject*> _players;
 };
 
 #endif // GAMEOBJECTS_H
