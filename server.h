@@ -35,6 +35,7 @@ private:
     QList <QWebSocket *> _clientsList;
     GameObjects _gameObjects;
     WorkJson _workJson;
+    void sendAll(QString data);
 };
 
 #endif // SERVER_H

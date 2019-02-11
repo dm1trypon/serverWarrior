@@ -14,3 +14,14 @@ QString Player::getNickname()
 {
     return _nickname;
 }
+
+void Player::setPosition(qreal speedX, qreal speedY)
+{
+    _posX = _posX + speedX;
+    _posY = _posY + speedY;
+}
+
+void Player::setMove(bool isHold)
+{
+    _move = isHold;
+}

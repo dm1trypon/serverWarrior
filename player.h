@@ -9,9 +9,11 @@ class Player : public QObject
     Q_OBJECT
 
 public:
-    Player(QMap <QString, int> position, qreal speedX, qreal speedY, QString nickname, int id, QObject *parent = nullptr);
+    Player(QMap <QString, qreal> position, qreal speedX, qreal speedY, QString nickname, int id, QObject *parent = nullptr);
 
     QString getNickname();
+    void setPosition(qreal speedX, qreal speedY);
+    void setMove(bool isHold);
 private:
     qreal _posX;
     qreal _posY;
@@ -19,6 +21,7 @@ private:
     qreal _speedY;
     int _life;
     int _id;
+    bool _move = false;
     QString _nickname;
 };
 

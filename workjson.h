@@ -15,6 +15,7 @@ public:
     QJsonValue parseJson(QString field, QJsonObject dataJsonObj);
     QString toJson(QString method);
     QString toJsonError(QString error);
+    QString toJsonConnection(QString nickname, int idPlayer, QMap<QString, qreal> positionPlayer);
 };
 
 #endif // WORKJSON_H

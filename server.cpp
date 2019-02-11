@@ -62,6 +62,15 @@ void Server::processTextMessage(QString data)
         QMap <QString, qreal> positionPlayer = _gameObjects.generateXY();
         _gameObjects.toPlayers(nickname, new Player(_gameObjects.generateXY(), 0, 0, nickname, idPlayer), APPEND);
         sendAll(_workJson.toJsonConnection(nickname, idPlayer, positionPlayer));
+        return;
+    }
+
+    if (_workJson.fromJson(data).value("method") == "control")
+    {
+        QString nickname = _workJson.parseJson("nickname", _workJson.fromJson(data)).toString();
+        QString key = _workJson.parseJson("key", _workJson.fromJson(data)).toString();
+        bool isHold = _workJson.parseJson("hold", _workJson.fromJson(data)).toBool();
+        _gameObjects.controlPlayers(nickname, key, isHold);
     }
 }
 

@@ -30,14 +30,16 @@ SOURCES += \
     server.cpp \
     player.cpp \
     gameobjects.cpp \
-    workjson.cpp
+    workjson.cpp \
+    animation.cpp
 
 HEADERS += \
         widget.h \
     server.h \
     player.h \
     gameobjects.h \
-    workjson.h
+    workjson.h \
+    animation.h
 
 FORMS += \
         widget.ui

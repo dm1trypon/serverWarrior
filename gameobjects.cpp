@@ -1,4 +1,5 @@
 #include "gameobjects.h"
+#include <ctime>
 
 #include <QDebug>
 
@@ -20,7 +21,7 @@ bool GameObjects::isExistPlayer(QString nickname)
     return false;
 }
 
-void GameObjects::toPlayers(QString nickname, QObject *player, bool operation)
+void GameObjects::toPlayers(QString nickname, Player *player, bool operation)
 {
     if (operation)
     {
@@ -31,6 +32,7 @@ void GameObjects::toPlayers(QString nickname, QObject *player, bool operation)
 
     qDebug() << "Remove player" << nickname << "from player's list...";
     _players.remove(nickname);
+    _animation.setObjects(_players);
 }
 
 int GameObjects::generateId()
@@ -46,7 +48,33 @@ QMap <QString, qreal> GameObjects::generateXY()
     return posXY;
 }
 
-QMap <QString, QObject *> GameObjects::getPlayers()
+void GameObjects::controlPlayers(QString nickname, QString key, bool isHold)
+{
+    if (key == "up")
+    {
+        _players[nickname]->setPosition(0, -speed);
+    }
+
+    if (key == "down")
+    {
+        _players[nickname]->setPosition(0, speed);
+    }
+
+    if (key == "left")
+    {
+        _players[nickname]->setPosition(-speed, 0);
+    }
+
+    if (key == "right")
+    {
+        _players[nickname]->setPosition(speed, 0);
+    }
+
+    _players[nickname]->setMove(isHold);
+    _animation.setObjects(_players);
+}
+
+QMap <QString, Player *> GameObjects::getPlayers()
 {
     return _players;
 }

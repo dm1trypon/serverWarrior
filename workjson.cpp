@@ -51,8 +51,8 @@ QString WorkJson::toJsonConnection(QString nickname, int idPlayer, QMap <QString
     dataJsonObj.insert("method", "connection");
     dataJsonObj.insert("nickname", nickname);
     dataJsonObj.insert("id_player", idPlayer);
-    dataJsonObj.insert("nickname", nickname);
-    dataJsonObj.insert("nickname", nickname);
+    dataJsonObj.insert("pos_x", positionPlayer["x"]);
+    dataJsonObj.insert("pos_y", positionPlayer["y"]);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
     return data;
