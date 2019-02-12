@@ -12,8 +12,13 @@ public:
     Player(QMap <QString, qreal> position, qreal speedX, qreal speedY, QString nickname, int id, QObject *parent = nullptr);
 
     QString getNickname();
-    void setPosition(qreal speedX, qreal speedY);
+    void setSpeed(QMap<QString, qreal> speed);
     void setMove(bool isHold);
+    QMap<QString, qreal> getPosition();
+    QMap<QString, qreal> getSpeed();
+    bool getMove();
+    int getIdPlayer();
+    void setPosition(QMap<QString, qreal> position);
 private:
     qreal _posX;
     qreal _posY;

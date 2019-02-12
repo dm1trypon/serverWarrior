@@ -1,7 +1,6 @@
 #ifndef GAMEOBJECTS_H
 #define GAMEOBJECTS_H
 
-#include "animation.h"
 #include "player.h"
 
 #include <QObject>
@@ -13,6 +12,8 @@ class GameObjects : public QObject
 
 public:
     GameObjects(QObject *parent = nullptr);
+    static GameObjects& Instance();
+
     bool isExistPlayer(QString nickname);
     void toPlayers(QString nickname, Player *player, bool operation);
 
@@ -20,11 +21,16 @@ public:
     QMap<QString, qreal> generateXY();
     QMap<QString, Player *> getPlayers();
     void controlPlayers(QString nickname, QString key, bool isHold);
+    QMap<QString, Player *> setPlayers(QMap<QString, Player *> players);
+    void clearList();
 private:
+    GameObjects(const GameObjects& root) = delete;
+    GameObjects& operator = (const GameObjects&) = delete;
+
     const qreal speed = 5;
 
     QMap <QString, Player *> _players;
-    Animation _animation;
+    bool isKeyboardSticking(QString nickname, QMap<QString, qreal> speedPlayer, bool isHold);
 };
 
 #endif // GAMEOBJECTS_H

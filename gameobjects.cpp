@@ -9,6 +9,12 @@ GameObjects::GameObjects(QObject *parent) :
     srand(static_cast<uint>(time(nullptr)));
 }
 
+GameObjects &GameObjects::Instance()
+{
+    static GameObjects theSingleInstance;
+    return theSingleInstance;
+}
+
 bool GameObjects::isExistPlayer(QString nickname)
 {
     if (_players.contains(nickname))
@@ -32,7 +38,6 @@ void GameObjects::toPlayers(QString nickname, Player *player, bool operation)
 
     qDebug() << "Remove player" << nickname << "from player's list...";
     _players.remove(nickname);
-    _animation.setObjects(_players);
 }
 
 int GameObjects::generateId()
@@ -50,31 +55,54 @@ QMap <QString, qreal> GameObjects::generateXY()
 
 void GameObjects::controlPlayers(QString nickname, QString key, bool isHold)
 {
+    QMap <QString, qreal> speedPlayer;
+
     if (key == "up")
     {
-        _players[nickname]->setPosition(0, -speed);
+        speedPlayer.insert("speedX", 0);
+        speedPlayer.insert("speedY", -speed);
     }
 
     if (key == "down")
     {
-        _players[nickname]->setPosition(0, speed);
+        speedPlayer.insert("speedX", 0);
+        speedPlayer.insert("speedY", speed);
     }
 
     if (key == "left")
     {
-        _players[nickname]->setPosition(-speed, 0);
+        speedPlayer.insert("speedX", -speed);
+        speedPlayer.insert("speedY", 0);
     }
 
     if (key == "right")
     {
-        _players[nickname]->setPosition(speed, 0);
+        speedPlayer.insert("speedX", speed);
+        speedPlayer.insert("speedY", 0);
     }
 
+    if (isKeyboardSticking(nickname, speedPlayer, isHold))
+    {
+        qWarning() << "Warning! Sticking keybord, check client!";
+        return;
+    }
+
+    _players[nickname]->setSpeed(speedPlayer);
     _players[nickname]->setMove(isHold);
-    _animation.setObjects(_players);
+}
+
+bool GameObjects::isKeyboardSticking(QString nickname, QMap <QString, qreal> speedPlayer, bool isHold)
+{
+    return _players[nickname]->getSpeed() == speedPlayer && _players[nickname]->getMove() == isHold;
 }
 
 QMap <QString, Player *> GameObjects::getPlayers()
 {
     return _players;
+}
+
+void GameObjects::clearList()
+{
+    qDeleteAll(_players.begin(), _players.end());
+    _players.clear();
 }

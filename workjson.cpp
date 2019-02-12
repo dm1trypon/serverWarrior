@@ -1,11 +1,12 @@
 #include "workjson.h"
 
 #include <QDebug>
+#include <QMap>
 
-WorkJson::WorkJson(QObject *parent) :
-    QObject(parent)
+WorkJson &WorkJson::Instance()
 {
-
+    static WorkJson theSingleInstance;
+    return theSingleInstance;
 }
 
 QJsonObject WorkJson::fromJson(QString data)
@@ -35,6 +36,28 @@ QString WorkJson::toJson(QString method)
     return data;
 }
 
+QString WorkJson::toJsonPlayers(QMap <QString, Player *> players)
+{
+    QJsonObject dataJsonObj;
+    dataJsonObj.insert("method", "objects");
+    QJsonObject playerJsonObj;
+
+    foreach (Player *player, players)
+    {
+        playerJsonObj.insert("nickname", player->getNickname());
+        playerJsonObj.insert("id_player", player->getIdPlayer());
+        QMap <QString, qreal> position = player->getPosition();
+        playerJsonObj.insert("pos_x", position["X"]);
+        playerJsonObj.insert("pos_y", position["Y"]);
+    }
+
+     dataJsonObj.insert("players", playerJsonObj);
+
+    QJsonDocument dataJsonDoc(dataJsonObj);
+    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+    return data;
+}
+
 QString WorkJson::toJsonError(QString error)
 {
     QJsonObject dataJsonObj;
@@ -56,4 +79,9 @@ QString WorkJson::toJsonConnection(QString nickname, int idPlayer, QMap <QString
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
     return data;
+}
+
+void WorkJson::toSend(QString data)
+{
+    emit signalToSend(data);
 }

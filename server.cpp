@@ -17,6 +17,7 @@ Server::Server(quint16 port, QObject *parent) :
     qDebug() << "Echoserver listening on port" << port;
     connect(_webSocketServer, &QWebSocketServer::newConnection, this, &Server::onNewConnection);
     connect(_webSocketServer, &QWebSocketServer::closed, this, &Server::closed);
+    _error = false;
 }
 
 Server::~Server()
@@ -26,14 +27,20 @@ Server::~Server()
     qDeleteAll(_clientsList.begin(), _clientsList.end());
 }
 
+bool Server::getError()
+{
+    return _error;
+}
+
 void Server::onNewConnection()
 {
     QWebSocket *pSocket = _webSocketServer->nextPendingConnection();
 
     connect(pSocket, &QWebSocket::textMessageReceived, this, &Server::processTextMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &Server::socketDisconnected);
+    connect(&WorkJson::Instance(), &WorkJson::signalToSend, this, &Server::sendAll);
 
-    pSocket->sendTextMessage(_workJson.toJson("verify"));
+    pSocket->sendTextMessage(WorkJson::Instance().toJson("verify"));
 
     _clientsList << pSocket;
 }
@@ -44,33 +51,33 @@ void Server::processTextMessage(QString data)
 
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
-    if (_workJson.fromJson(data).value("method") == "verify")
+    if (WorkJson::Instance().fromJson(data).value("method") == "verify")
     {
-        QString nickname = _workJson.fromJson(data).value("nickname").toString();
+        QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
 
-        if (_gameObjects.isExistPlayer(nickname))
+        if (GameObjects::Instance().isExistPlayer(nickname))
         {
             qWarning() << "Nickname already use!";
-            pClient->sendTextMessage(_workJson.toJsonError("Nickname already use!"));
+            pClient->sendTextMessage(WorkJson::Instance().toJsonError("Nickname already use!"));
             _clientsList.removeAll(pClient);
             pClient->deleteLater();
             return;
         }
 
         _nameClients.insert(pClient, nickname);
-        int idPlayer = _gameObjects.generateId();
-        QMap <QString, qreal> positionPlayer = _gameObjects.generateXY();
-        _gameObjects.toPlayers(nickname, new Player(_gameObjects.generateXY(), 0, 0, nickname, idPlayer), APPEND);
-        sendAll(_workJson.toJsonConnection(nickname, idPlayer, positionPlayer));
+        int idPlayer = GameObjects::Instance().generateId();
+        QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
+        GameObjects::Instance().toPlayers(nickname, new Player(GameObjects::Instance().generateXY(), 0, 0, nickname, idPlayer), APPEND);
+        sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
         return;
     }
 
-    if (_workJson.fromJson(data).value("method") == "control")
+    if (WorkJson::Instance().fromJson(data).value("method") == "control")
     {
-        QString nickname = _workJson.parseJson("nickname", _workJson.fromJson(data)).toString();
-        QString key = _workJson.parseJson("key", _workJson.fromJson(data)).toString();
-        bool isHold = _workJson.parseJson("hold", _workJson.fromJson(data)).toBool();
-        _gameObjects.controlPlayers(nickname, key, isHold);
+        QString nickname = WorkJson::Instance().parseJson("nickname", WorkJson::Instance().fromJson(data)).toString();
+        QString key = WorkJson::Instance().parseJson("key", WorkJson::Instance().fromJson(data)).toString();
+        bool isHold = WorkJson::Instance().parseJson("hold", WorkJson::Instance().fromJson(data)).toBool();
+        GameObjects::Instance().controlPlayers(nickname, key, isHold);
     }
 }
 
@@ -104,15 +111,15 @@ void Server::socketDisconnected()
 
     qDebug() << "Remove player...:" << nickname;
 
-    if (!_gameObjects.isExistPlayer(nickname))
+    if (!GameObjects::Instance().isExistPlayer(nickname))
     {
         qWarning() << "Warning! Player is not exist in players list:" << nickname;
         return;
     }
 
-    QMap <QString, QObject *> players = _gameObjects.getPlayers();
+    QMap <QString, Player *> players = GameObjects::Instance().getPlayers();
 
-    _gameObjects.toPlayers(nickname, players[nickname], REMOVE);
+    GameObjects::Instance().toPlayers(nickname, players[nickname], REMOVE);
 
     if (pClient) {
         _clientsList.removeAll(pClient);

@@ -1,7 +1,16 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include "server.h"
+#include "animation.h"
+
 #include <QWidget>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QListWidget>
+#include <QVBoxLayout>
+#include <QTimer>
 
 namespace Ui {
 class Widget;
@@ -16,7 +25,35 @@ public:
     ~Widget();
 
 private:
+    const int UPDATE = 1000;
+
+    bool fullInfo = false;
+    quint16 _port;
+    Server *_server;
+    Animation _animation;
+
     Ui::Widget *ui;
+    QVBoxLayout *_mainLayout;
+    QLabel *_labelPort;
+    QLabel *_labelList;
+    QLabel *_labelInfo;
+    QLineEdit *_inputPort;
+    QListWidget *_listClients;
+    QPushButton *_buttonStart;
+    QPushButton *_buttonStop;
+    QTimer _updateTimer;
+
+    void createElements();
+
+    void timer();
+    void stopServer();
+    void onStopServer();
+    void onStartedServer();
+    void onErrorServer();
+private slots:
+    void showClients();
+    void startServer();
+
 };
 
 #endif // WIDGET_H

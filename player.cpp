@@ -15,10 +15,42 @@ QString Player::getNickname()
     return _nickname;
 }
 
-void Player::setPosition(qreal speedX, qreal speedY)
+QMap <QString, qreal> Player::getPosition()
 {
-    _posX = _posX + speedX;
-    _posY = _posY + speedY;
+    QMap <QString, qreal> position;
+    position.insert("X", _posX);
+    position.insert("Y", _posY);
+    return position;
+}
+
+QMap <QString, qreal> Player::getSpeed()
+{
+    QMap <QString, qreal> speed;
+    speed.insert("speedX", _speedX);
+    speed.insert("speedY", _speedY);
+    return speed;
+}
+
+int Player::getIdPlayer()
+{
+    return _id;
+}
+
+bool Player::getMove()
+{
+    return _move;
+}
+
+void Player::setSpeed(QMap <QString, qreal> speed)
+{
+    _speedX = speed["speedX"];
+    _speedY = speed["speedY"];
+}
+
+void Player::setPosition(QMap <QString, qreal> position)
+{
+    _posX = position["X"];
+    _posY = position["Y"];
 }
 
 void Player::setMove(bool isHold)

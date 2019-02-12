@@ -13,17 +13,16 @@ class Animation : public QObject
 
 public:
     Animation(QObject *parent = nullptr);
-
-    void setObjects(QMap<QString, Player *> objects);
-private slots:
-    void process();
-private:
-    const int FPS = 30;
-
-    QMap <QString, Player *> _objects;
-    QTimer _animationTimer;
     void start();
     void stop();
+
+private slots:
+    void process();
+
+private:
+    const int FPS = 1000;
+
+    QTimer _animationTimer;
 };
 
 #endif // ANIMATION_H
