@@ -1,5 +1,7 @@
 ﻿#include "server.h"
 #include "player.h"
+#include "gameobjects.h"
+#include "workjson.h"
 
 #include <QWebSocket>
 #include <QJsonValue>

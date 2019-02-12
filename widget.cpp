@@ -35,6 +35,9 @@ void Widget::createElements()
     _buttonStop->hide();
     connect(_buttonStop, &QPushButton::clicked, this, &Widget::stopServer);
 
+    _buttonMore = new QPushButton("More");
+    connect(_buttonMore, &QPushButton::clicked, this, &Widget::typeList);
+
     _labelInfo = new QLabel("<H2>Game server</H2>");
 
     _labelList = new QLabel("Connected clients:");
@@ -47,6 +50,7 @@ void Widget::createElements()
     _mainLayout->addWidget(_buttonStart);
     _mainLayout->addWidget(_buttonStop);
     _mainLayout->addWidget(_labelList);
+    _mainLayout->addWidget(_buttonMore);
     _mainLayout->addWidget(_listClients);
 
     setLayout(_mainLayout);
@@ -54,7 +58,6 @@ void Widget::createElements()
 
 void Widget::timer()
 {
-    _updateTimer.start(UPDATE);
     connect(&_updateTimer, &QTimer::timeout, this, &Widget::showClients);
 }
 
@@ -82,8 +85,22 @@ void Widget::stopServer()
     onStopServer();
 }
 
+void Widget::typeList()
+{
+    if (_fullInfo)
+    {
+        _buttonMore->setText("More");
+        _fullInfo = false;
+        return;
+    }
+
+    _buttonMore->setText("Less");
+    _fullInfo = true;
+}
+
 void Widget::onStartedServer()
 {
+    _updateTimer.start(UPDATE);
     _animation.start();
     _inputPort->hide();
     _labelPort->hide();
@@ -95,6 +112,7 @@ void Widget::onStartedServer()
 
 void Widget::onStopServer()
 {
+    _updateTimer.stop();
     _animation.stop();
     _labelInfo->setText("<H2>Game server</H2>");
     _inputPort->show();
@@ -117,7 +135,7 @@ void Widget::showClients()
     {
         _listClients->clear();
 
-        if (fullInfo)
+        if (_fullInfo)
         {
             _listClients->addItem(player->getNickname() + " {PLAYER_ID: "
                                   + QString::number(player->getIdPlayer())

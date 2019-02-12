@@ -27,7 +27,7 @@ public:
 private:
     const int UPDATE = 1000;
 
-    bool fullInfo = false;
+    bool _fullInfo = false;
     quint16 _port;
     Server *_server;
     Animation _animation;
@@ -41,6 +41,7 @@ private:
     QListWidget *_listClients;
     QPushButton *_buttonStart;
     QPushButton *_buttonStop;
+    QPushButton *_buttonMore;
     QTimer _updateTimer;
 
     void createElements();
@@ -50,9 +51,11 @@ private:
     void onStopServer();
     void onStartedServer();
     void onErrorServer();
+
 private slots:
     void showClients();
     void startServer();
+    void typeList();
 
 };
 
