@@ -56,6 +56,7 @@ QMap <QString, qreal> GameObjects::generateXY()
 
 void GameObjects::controlPlayers(QString nickname, QString key, bool isHold)
 {
+    qDebug() << nickname << key << isHold;
     QMap <QString, qreal> speedPlayer;
 
     if (key == "up")
@@ -86,6 +87,12 @@ void GameObjects::controlPlayers(QString nickname, QString key, bool isHold)
     {
         qWarning() << "Warning! Sticking keybord, check client!";
         return;
+    }
+
+    if (!isHold)
+    {
+        speedPlayer.insert("speedX", 0);
+        speedPlayer.insert("speedY", 0);
     }
 
     _players[nickname]->setSpeed(speedPlayer);

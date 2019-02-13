@@ -77,9 +77,10 @@ void Server::processTextMessage(QString data)
 
     if (WorkJson::Instance().fromJson(data).value("method") == "control")
     {
-        QString nickname = WorkJson::Instance().parseJson("nickname", WorkJson::Instance().fromJson(data)).toString();
-        QString key = WorkJson::Instance().parseJson("key", WorkJson::Instance().fromJson(data)).toString();
-        bool isHold = WorkJson::Instance().parseJson("hold", WorkJson::Instance().fromJson(data)).toBool();
+        QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
+        QString key = WorkJson::Instance().fromJson(data).value("key").toString();
+        bool isHold = WorkJson::Instance().fromJson(data).value("hold").toBool();
+        qDebug() << "Method:" << WorkJson::Instance().fromJson(data).value("method");
         GameObjects::Instance().controlPlayers(nickname, key, isHold);
     }
 }

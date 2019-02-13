@@ -25,7 +25,6 @@ void Animation::stop()
 
 void Animation::process()
 {   
-    qDebug() << "Tic-Tak";
     QMap <QString, Player *> players = GameObjects::Instance().getPlayers();
 
     foreach (Player *player, players)

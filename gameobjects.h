@@ -27,7 +27,7 @@ private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
 
-    const qreal speed = 5;
+    const qreal speed = 10;
 
     QMap <QString, Player *> _players;
     bool isKeyboardSticking(QString nickname, QMap<QString, qreal> speedPlayer, bool isHold);

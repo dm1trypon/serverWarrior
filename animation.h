@@ -20,7 +20,7 @@ private slots:
     void process();
 
 private:
-    const int FPS = 1000;
+    const int FPS = 10;
 
     QTimer _animationTimer;
 };
