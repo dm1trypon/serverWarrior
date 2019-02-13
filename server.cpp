@@ -62,6 +62,7 @@ void Server::processTextMessage(QString data)
             qWarning() << "Nickname already use!";
             pClient->sendTextMessage(WorkJson::Instance().toJsonError("Nickname already use!"));
             _clientsList.removeAll(pClient);
+            pClient->close();
             pClient->deleteLater();
             return;
         }
@@ -69,7 +70,7 @@ void Server::processTextMessage(QString data)
         _nameClients.insert(pClient, nickname);
         int idPlayer = GameObjects::Instance().generateId();
         QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
-        GameObjects::Instance().toPlayers(nickname, new Player(GameObjects::Instance().generateXY(), 0, 0, nickname, idPlayer), APPEND);
+        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, 0, 0, nickname, idPlayer), APPEND);
         sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
         return;
     }

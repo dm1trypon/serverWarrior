@@ -31,8 +31,8 @@ void Animation::process()
     foreach (Player *player, players)
     {
         QMap <QString, qreal> position;
-        position.insert("X", player->getPosition()["X"] + player->getSpeed()["speedX"]);
-        position.insert("Y", player->getPosition()["Y"] + player->getSpeed()["speedY"]);
+        position.insert("x", player->getPosition()["x"] + player->getSpeed()["speedX"]);
+        position.insert("y", player->getPosition()["y"] + player->getSpeed()["speedY"]);
         player->setPosition(position);
     }
 

@@ -131,16 +131,15 @@ void Widget::onErrorServer()
 
 void Widget::showClients()
 {
+     _listClients->clear();
     foreach (Player *player, GameObjects::Instance().getPlayers())
     {
-        _listClients->clear();
-
         if (_fullInfo)
         {
             _listClients->addItem(player->getNickname() + " {PLAYER_ID: "
                                   + QString::number(player->getIdPlayer())
-                                  + ", POSITION: [" + QString::number(player->getPosition()["X"])
-                                  + ":" + QString::number(player->getPosition()["Y"])
+                                  + ", POSITION: [" + QString::number(player->getPosition()["x"])
+                                  + ":" + QString::number(player->getPosition()["y"])
                                   + "], MOVE: " + QString::number(player->getMove()) + "}");
         }
         else

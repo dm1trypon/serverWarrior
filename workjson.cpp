@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QMap>
+#include <QJsonArray>
 
 WorkJson &WorkJson::Instance()
 {
@@ -40,18 +41,21 @@ QString WorkJson::toJsonPlayers(QMap <QString, Player *> players)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "objects");
-    QJsonObject playerJsonObj;
+
+    QJsonArray playersJsonArr;
 
     foreach (Player *player, players)
     {
+        QJsonObject playerJsonObj;
         playerJsonObj.insert("nickname", player->getNickname());
         playerJsonObj.insert("id_player", player->getIdPlayer());
         QMap <QString, qreal> position = player->getPosition();
-        playerJsonObj.insert("pos_x", position["X"]);
-        playerJsonObj.insert("pos_y", position["Y"]);
+        playerJsonObj.insert("pos_x", position["x"]);
+        playerJsonObj.insert("pos_y", position["y"]);
+        playersJsonArr.append(playerJsonObj);
     }
 
-     dataJsonObj.insert("players", playerJsonObj);
+     dataJsonObj.insert("players", playersJsonArr);
 
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));

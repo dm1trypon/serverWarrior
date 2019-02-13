@@ -38,6 +38,7 @@ void GameObjects::toPlayers(QString nickname, Player *player, bool operation)
 
     qDebug() << "Remove player" << nickname << "from player's list...";
     _players.remove(nickname);
+    qDebug() << _players;
 }
 
 int GameObjects::generateId()
@@ -48,8 +49,8 @@ int GameObjects::generateId()
 QMap <QString, qreal> GameObjects::generateXY()
 {
     QMap <QString, qreal> posXY;
-    posXY.insert("X", qrand() % (1000 - 1) + 1);
-    posXY.insert("Y", qrand() % (1000 - 1) + 1);
+    posXY.insert("x", qrand() % (1000 - 1) + 1);
+    posXY.insert("y", qrand() % (1000 - 1) + 1);
     return posXY;
 }
 

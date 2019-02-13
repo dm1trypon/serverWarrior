@@ -2,7 +2,7 @@
 
 Player::Player(QMap <QString, qreal> position, qreal speedX, qreal speedY, QString nickname, int id, QObject *parent) :
     QObject(parent),
-    _posX(position["X"]), _posY(position["Y"]),
+    _posX(position["x"]), _posY(position["y"]),
     _speedX(speedX), _speedY(speedY),
     _id(id),
     _nickname(nickname)
@@ -18,8 +18,8 @@ QString Player::getNickname()
 QMap <QString, qreal> Player::getPosition()
 {
     QMap <QString, qreal> position;
-    position.insert("X", _posX);
-    position.insert("Y", _posY);
+    position.insert("x", _posX);
+    position.insert("y", _posY);
     return position;
 }
 
@@ -49,8 +49,8 @@ void Player::setSpeed(QMap <QString, qreal> speed)
 
 void Player::setPosition(QMap <QString, qreal> position)
 {
-    _posX = position["X"];
-    _posY = position["Y"];
+    _posX = position["x"];
+    _posY = position["y"];
 }
 
 void Player::setMove(bool isHold)
