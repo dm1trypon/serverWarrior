@@ -72,6 +72,7 @@ void Server::processTextMessage(QString data)
         QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
         GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, 0, 0, nickname, idPlayer), APPEND);
         sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
+        sendAll(WorkJson::Instance().toJsonPlayers(GameObjects::Instance().getPlayers()));
         return;
     }
 
@@ -130,5 +131,6 @@ void Server::socketDisconnected()
         pClient->deleteLater();
     }
 
+    sendAll(WorkJson::Instance().toJsonDisconnection(nickname));
     qDebug() << "Done!";
 }

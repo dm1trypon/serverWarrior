@@ -85,6 +85,16 @@ QString WorkJson::toJsonConnection(QString nickname, int idPlayer, QMap <QString
     return data;
 }
 
+QString WorkJson::toJsonDisconnection(QString nickname)
+{
+    QJsonObject dataJsonObj;
+    dataJsonObj.insert("method", "disconnection");
+    dataJsonObj.insert("nickname", nickname);
+    QJsonDocument dataJsonDoc(dataJsonObj);
+    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+    return data;
+}
+
 void WorkJson::toSend(QString data)
 {
     emit signalToSend(data);

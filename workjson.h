@@ -26,6 +26,7 @@ public:
     QString toJsonConnection(QString nickname, int idPlayer, QMap<QString, qreal> positionPlayer);
     QString toJsonPlayers(QMap<QString, Player *> players);
     void toSend(QString data);
+    QString toJsonDisconnection(QString nickname);
 
 signals:
     void signalToSend(QString);
