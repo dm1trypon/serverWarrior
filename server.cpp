@@ -6,7 +6,7 @@
 #include <QWebSocket>
 #include <QJsonValue>
 
-Server::Server(quint16 port, QObject *parent) :
+Server::Server(const quint16 port, QObject *parent) :
     QObject(parent),
     _webSocketServer(new QWebSocketServer(QStringLiteral("WebSocket server for game."),
                                                QWebSocketServer::NonSecureMode, this))
@@ -20,6 +20,8 @@ Server::Server(quint16 port, QObject *parent) :
     connect(_webSocketServer, &QWebSocketServer::newConnection, this, &Server::onNewConnection);
     connect(_webSocketServer, &QWebSocketServer::closed, this, &Server::closed);
     _error = false;
+
+    GameObjects::Instance().createScene();
 }
 
 Server::~Server()
@@ -47,7 +49,7 @@ void Server::onNewConnection()
     _clientsList << pSocket;
 }
 
-void Server::processTextMessage(QString data)
+void Server::processTextMessage(const QString &data)
 {
     qDebug() << "Incoming message:" << data;
 
@@ -70,9 +72,14 @@ void Server::processTextMessage(QString data)
         _nameClients.insert(pClient, nickname);
         int idPlayer = GameObjects::Instance().generateId();
         QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
-        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, 0, 0, nickname, idPlayer), APPEND);
+
+        QMap <QString, qreal> speedPlayer;
+        speedPlayer.insert("speed_x", 0);
+        speedPlayer.insert("speed_y", 0);
+
+        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, speedPlayer, nickname, idPlayer), APPEND);
         sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
-        sendAll(WorkJson::Instance().toJsonPlayers(GameObjects::Instance().getPlayers()));
+        sendAll(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getScene()));
         return;
     }
 
@@ -86,7 +93,7 @@ void Server::processTextMessage(QString data)
     }
 }
 
-void Server::sendAll(QString data)
+void Server::sendAll(const QString &data)
 {
     foreach (QWebSocket* client, _clientsList)
     {

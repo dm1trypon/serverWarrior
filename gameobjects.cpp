@@ -15,7 +15,20 @@ GameObjects &GameObjects::Instance()
     return theSingleInstance;
 }
 
-bool GameObjects::isExistPlayer(QString nickname)
+void GameObjects::createScene()
+{
+    QMap <QString, qreal> position;
+    position.insert("x", 0);
+    position.insert("y", 0);
+
+    QMap <QString, qreal> size;
+    size.insert("width", 3840);
+    size.insert("height", 2160);
+
+    _scene.insert("scene", new Scene(position, size));
+}
+
+bool GameObjects::isExistPlayer(const QString &nickname)
 {
     if (_players.contains(nickname))
     {
@@ -27,7 +40,7 @@ bool GameObjects::isExistPlayer(QString nickname)
     return false;
 }
 
-void GameObjects::toPlayers(QString nickname, Player *player, bool operation)
+void GameObjects::toPlayers(const QString &nickname, Player *player, const bool operation)
 {
     if (operation)
     {
@@ -54,33 +67,33 @@ QMap <QString, qreal> GameObjects::generateXY()
     return posXY;
 }
 
-void GameObjects::controlPlayers(QString nickname, QString key, bool isHold)
+void GameObjects::controlPlayers(const QString &nickname, const QString &key, const bool isHold)
 {
     qDebug() << nickname << key << isHold;
     QMap <QString, qreal> speedPlayer;
 
     if (key == "up")
     {
-        speedPlayer.insert("speedX", 0);
-        speedPlayer.insert("speedY", -speed);
+        speedPlayer.insert("speed_x", 0);
+        speedPlayer.insert("speed_y", -speed);
     }
 
     if (key == "down")
     {
-        speedPlayer.insert("speedX", 0);
-        speedPlayer.insert("speedY", speed);
+        speedPlayer.insert("speed_x", 0);
+        speedPlayer.insert("speed_y", speed);
     }
 
     if (key == "left")
     {
-        speedPlayer.insert("speedX", -speed);
-        speedPlayer.insert("speedY", 0);
+        speedPlayer.insert("speed_x", -speed);
+        speedPlayer.insert("speed_y", 0);
     }
 
     if (key == "right")
     {
-        speedPlayer.insert("speedX", speed);
-        speedPlayer.insert("speedY", 0);
+        speedPlayer.insert("speed_x", speed);
+        speedPlayer.insert("speed_y", 0);
     }
 
     if (isKeyboardSticking(nickname, speedPlayer, isHold))
@@ -91,15 +104,15 @@ void GameObjects::controlPlayers(QString nickname, QString key, bool isHold)
 
     if (!isHold)
     {
-        speedPlayer.insert("speedX", 0);
-        speedPlayer.insert("speedY", 0);
+        speedPlayer.insert("speed_x", 0);
+        speedPlayer.insert("speed_y", 0);
     }
 
     _players[nickname]->setSpeed(speedPlayer);
     _players[nickname]->setMove(isHold);
 }
 
-bool GameObjects::isKeyboardSticking(QString nickname, QMap <QString, qreal> speedPlayer, bool isHold)
+bool GameObjects::isKeyboardSticking(const QString &nickname, const QMap <QString, qreal> speedPlayer, const bool isHold)
 {
     return _players[nickname]->getSpeed() == speedPlayer && _players[nickname]->getMove() == isHold;
 }
@@ -107,6 +120,11 @@ bool GameObjects::isKeyboardSticking(QString nickname, QMap <QString, qreal> spe
 QMap <QString, Player *> GameObjects::getPlayers()
 {
     return _players;
+}
+
+QMap <QString, Scene *> GameObjects::getScene()
+{
+    return _scene;
 }
 
 void GameObjects::clearList()

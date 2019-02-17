@@ -10,12 +10,12 @@ WorkJson &WorkJson::Instance()
     return theSingleInstance;
 }
 
-QJsonObject WorkJson::fromJson(QString data)
+QJsonObject WorkJson::fromJson(const QString &data)
 {
     return QJsonDocument::fromJson(data.toUtf8()).object();
 }
 
-QJsonValue WorkJson::parseJson(QString field, QJsonObject dataJsonObj)
+QJsonValue WorkJson::parseJson(const QString &field, const QJsonObject dataJsonObj)
 {
     if (dataJsonObj.contains(field))
     {
@@ -28,7 +28,7 @@ QJsonValue WorkJson::parseJson(QString field, QJsonObject dataJsonObj)
     return dataJsonObj.value(field);
 }
 
-QString WorkJson::toJson(QString method)
+QString WorkJson::toJson(const QString &method)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", method);
@@ -37,7 +37,7 @@ QString WorkJson::toJson(QString method)
     return data;
 }
 
-QString WorkJson::toJsonPlayers(QMap <QString, Player *> players)
+QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QMap <QString, Scene *> scene)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "objects");
@@ -55,14 +55,26 @@ QString WorkJson::toJsonPlayers(QMap <QString, Player *> players)
         playersJsonArr.append(playerJsonObj);
     }
 
-     dataJsonObj.insert("players", playersJsonArr);
+    dataJsonObj.insert("players", playersJsonArr);
+
+    QJsonObject sceneJsonObj;
+
+    QMap <QString, qreal> size = scene["scene"]->getSize();
+    sceneJsonObj.insert("width", size["width"]);
+    sceneJsonObj.insert("height", size["height"]);
+
+    QMap <QString, qreal> position = scene["scene"]->getPosition();
+    sceneJsonObj.insert("pos_x", position["x"]);
+    sceneJsonObj.insert("pos_y", position["y"]);
+
+    dataJsonObj.insert("scene", sceneJsonObj);
 
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
     return data;
 }
 
-QString WorkJson::toJsonError(QString error)
+QString WorkJson::toJsonError(const QString &error)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "error");
@@ -72,7 +84,7 @@ QString WorkJson::toJsonError(QString error)
     return data;
 }
 
-QString WorkJson::toJsonConnection(QString nickname, int idPlayer, QMap <QString, qreal> positionPlayer)
+QString WorkJson::toJsonConnection(const QString &nickname, const int idPlayer, const QMap <QString, qreal> positionPlayer)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "connection");
@@ -85,7 +97,7 @@ QString WorkJson::toJsonConnection(QString nickname, int idPlayer, QMap <QString
     return data;
 }
 
-QString WorkJson::toJsonDisconnection(QString nickname)
+QString WorkJson::toJsonDisconnection(const QString &nickname)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "disconnection");
@@ -95,7 +107,7 @@ QString WorkJson::toJsonDisconnection(QString nickname)
     return data;
 }
 
-void WorkJson::toSend(QString data)
+void WorkJson::toSend(const QString &data)
 {
     emit signalToSend(data);
 }

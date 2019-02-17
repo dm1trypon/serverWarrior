@@ -2,6 +2,7 @@
 #define GAMEOBJECTS_H
 
 #include "player.h"
+#include "scene.h"
 
 #include <QObject>
 #include <QMap>
@@ -14,23 +15,26 @@ public:
     GameObjects(QObject *parent = nullptr);
     static GameObjects& Instance();
 
-    bool isExistPlayer(QString nickname);
-    void toPlayers(QString nickname, Player *player, bool operation);
+    bool isExistPlayer(const QString &nickname);
+    void toPlayers(const QString &nickname, Player *player, const bool operation);
 
     int generateId();
     QMap<QString, qreal> generateXY();
     QMap<QString, Player *> getPlayers();
-    void controlPlayers(QString nickname, QString key, bool isHold);
+    void controlPlayers(const QString &nickname, const QString &key, const bool isHold);
     QMap<QString, Player *> setPlayers(QMap<QString, Player *> players);
     void clearList();
+    void createScene();
+    QMap<QString, Scene *> getScene();
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
 
-    const qreal speed = 10;
+    const qreal speed = 6;
 
     QMap <QString, Player *> _players;
-    bool isKeyboardSticking(QString nickname, QMap<QString, qreal> speedPlayer, bool isHold);
+    QMap <QString, Scene *> _scene;
+    bool isKeyboardSticking(const QString &nickname, const QMap<QString, qreal> speedPlayer, const bool isHold);
 };
 
 #endif // GAMEOBJECTS_H

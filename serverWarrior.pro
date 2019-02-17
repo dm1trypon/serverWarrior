@@ -31,7 +31,8 @@ SOURCES += \
     player.cpp \
     gameobjects.cpp \
     workjson.cpp \
-    animation.cpp
+    animation.cpp \
+    scene.cpp
 
 HEADERS += \
         widget.h \
@@ -39,7 +40,8 @@ HEADERS += \
     player.h \
     gameobjects.h \
     workjson.h \
-    animation.h
+    animation.h \
+    scene.h
 
 FORMS += \
         widget.ui

@@ -12,7 +12,7 @@ class Server : public QObject
     Q_OBJECT
 
 public:
-    explicit Server(quint16 port, QObject *parent = nullptr);
+    explicit Server(const quint16 port, QObject *parent = nullptr);
     ~Server();
 
     bool getError();
@@ -21,9 +21,9 @@ signals:
 
 private slots:
     void onNewConnection();
-    void processTextMessage(QString data);
+    void processTextMessage(const QString &data);
     void socketDisconnected();
-    void sendAll(QString data);
+    void sendAll(const QString &data);
 
 private:
     const bool REMOVE = false;

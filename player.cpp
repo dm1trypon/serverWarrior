@@ -1,9 +1,12 @@
 #include "player.h"
 
-Player::Player(QMap <QString, qreal> position, qreal speedX, qreal speedY, QString nickname, int id, QObject *parent) :
+Player::Player(const QMap <QString, qreal> position,
+               const QMap <QString, qreal> speed,
+               const QString &nickname,
+               const int id, QObject *parent) :
     QObject(parent),
     _posX(position["x"]), _posY(position["y"]),
-    _speedX(speedX), _speedY(speedY),
+    _speedX(speed["speed_x"]), _speedY(speed["speed_y"]),
     _id(id),
     _nickname(nickname)
 {
@@ -26,8 +29,8 @@ QMap <QString, qreal> Player::getPosition()
 QMap <QString, qreal> Player::getSpeed()
 {
     QMap <QString, qreal> speed;
-    speed.insert("speedX", _speedX);
-    speed.insert("speedY", _speedY);
+    speed.insert("speed_x", _speedX);
+    speed.insert("speed_y", _speedY);
     return speed;
 }
 
@@ -41,13 +44,13 @@ bool Player::getMove()
     return _move;
 }
 
-void Player::setSpeed(QMap <QString, qreal> speed)
+void Player::setSpeed(const QMap <QString, qreal> speed)
 {
-    _speedX = speed["speedX"];
-    _speedY = speed["speedY"];
+    _speedX = speed["speed_x"];
+    _speedY = speed["speed_y"];
 }
 
-void Player::setPosition(QMap <QString, qreal> position)
+void Player::setPosition(const QMap <QString, qreal> position)
 {
     _posX = position["x"];
     _posY = position["y"];

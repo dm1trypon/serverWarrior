@@ -26,14 +26,15 @@ void Animation::stop()
 void Animation::process()
 {   
     QMap <QString, Player *> players = GameObjects::Instance().getPlayers();
+    QMap <QString, Scene *> scene = GameObjects::Instance().getScene();
 
     foreach (Player *player, players)
     {
         QMap <QString, qreal> position;
-        position.insert("x", player->getPosition()["x"] + player->getSpeed()["speedX"]);
-        position.insert("y", player->getPosition()["y"] + player->getSpeed()["speedY"]);
+        position.insert("x", player->getPosition()["x"] + player->getSpeed()["speed_x"]);
+        position.insert("y", player->getPosition()["y"] + player->getSpeed()["speed_y"]);
         player->setPosition(position);
     }
 
-    WorkJson::Instance().toSend(WorkJson::Instance().toJsonPlayers(players));
+    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(players, scene));
 }
