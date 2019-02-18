@@ -20,17 +20,21 @@ public:
     int getIdPlayer();
     void setPosition(const QMap<QString, qreal> position);
     QMap <QString, qreal> getSize();
+    QMap<QString, qreal> getOldPosition();
 private:
     qreal _width;
     qreal _height;
     qreal _posX;
     qreal _posY;
+    qreal _posXold;
+    qreal _posYold;
     qreal _speedX;
     qreal _speedY;
     int _life;
     int _id;
     bool _move = false;
     QString _nickname;
+    void setOldPosition(const QMap<QString, qreal> oldPosition);
 };
 
 #endif // PLAYER_H

@@ -28,6 +28,20 @@ QMap <QString, qreal> Player::getPosition()
     return position;
 }
 
+QMap <QString, qreal> Player::getOldPosition()
+{
+    QMap <QString, qreal> oldPosition;
+    oldPosition.insert("x", _posXold);
+    oldPosition.insert("y", _posYold);
+    return oldPosition;
+}
+
+void Player::setOldPosition(const QMap <QString, qreal> oldPosition)
+{
+    _posXold = oldPosition["x"];
+    _posYold = oldPosition["y"];
+}
+
 QMap <QString, qreal> Player::getSize()
 {
     QMap <QString, qreal> size;
@@ -62,6 +76,12 @@ void Player::setSpeed(const QMap <QString, qreal> speed)
 
 void Player::setPosition(const QMap <QString, qreal> position)
 {
+    QMap <QString, qreal> oldPosition;
+    oldPosition.insert("x", _posX);
+    oldPosition.insert("y", _posY);
+
+    setOldPosition(oldPosition);
+
     _posX = position["x"];
     _posY = position["y"];
 }

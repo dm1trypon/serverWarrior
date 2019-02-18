@@ -9,6 +9,7 @@ class Collision
 public:
     Collision();
     QString checkCollision(Player *player, Scene *scene);
+    bool checkCollisionPlayers(Player *player, QMap<QString, Player *> players);
 };
 
 #endif // COLLISION_H

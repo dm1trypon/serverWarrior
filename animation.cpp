@@ -60,10 +60,22 @@ void Animation::process()
             vertical = -10;
         }
 
+        if (_collision.checkCollisionPlayers(player, players))
+        {
+            QMap <QString, qreal> position;
+            position.insert("x", player->getOldPosition()["x"] + player->getSpeed()["speed_x"] + horizontal);
+            position.insert("y", player->getOldPosition()["y"] + player->getSpeed()["speed_y"] + vertical);
+            player->setPosition(position);
+
+            break;
+        }
+
         QMap <QString, qreal> position;
         position.insert("x", player->getPosition()["x"] + player->getSpeed()["speed_x"] + horizontal);
         position.insert("y", player->getPosition()["y"] + player->getSpeed()["speed_y"] + vertical);
         player->setPosition(position);
+
+
     }
 
     WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(players, scene));
