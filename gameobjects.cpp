@@ -22,8 +22,8 @@ void GameObjects::createScene()
     position.insert("y", 0);
 
     QMap <QString, qreal> size;
-    size.insert("width", 3840);
-    size.insert("height", 2160);
+    size.insert("width", 1920);
+    size.insert("height", 1080);
 
     _scene.insert("scene", new Scene(position, size));
 }

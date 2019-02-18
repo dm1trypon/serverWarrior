@@ -49,9 +49,15 @@ QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QM
         QJsonObject playerJsonObj;
         playerJsonObj.insert("nickname", player->getNickname());
         playerJsonObj.insert("id_player", player->getIdPlayer());
+
         QMap <QString, qreal> position = player->getPosition();
         playerJsonObj.insert("pos_x", position["x"]);
         playerJsonObj.insert("pos_y", position["y"]);
+
+        QMap <QString, qreal> size = player->getSize();
+        playerJsonObj.insert("width", size["width"]);
+        playerJsonObj.insert("height", size["height"]);
+
         playersJsonArr.append(playerJsonObj);
     }
 

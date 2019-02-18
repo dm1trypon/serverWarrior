@@ -2,9 +2,11 @@
 
 Player::Player(const QMap <QString, qreal> position,
                const QMap <QString, qreal> speed,
+               const QMap <QString, qreal> size,
                const QString &nickname,
                const int id, QObject *parent) :
     QObject(parent),
+    _width(size["width"]), _height(size["height"]),
     _posX(position["x"]), _posY(position["y"]),
     _speedX(speed["speed_x"]), _speedY(speed["speed_y"]),
     _id(id),
@@ -24,6 +26,14 @@ QMap <QString, qreal> Player::getPosition()
     position.insert("x", _posX);
     position.insert("y", _posY);
     return position;
+}
+
+QMap <QString, qreal> Player::getSize()
+{
+    QMap <QString, qreal> size;
+    size.insert("width", _width);
+    size.insert("height", _height);
+    return size;
 }
 
 QMap <QString, qreal> Player::getSpeed()

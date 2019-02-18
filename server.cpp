@@ -77,7 +77,11 @@ void Server::processTextMessage(const QString &data)
         speedPlayer.insert("speed_x", 0);
         speedPlayer.insert("speed_y", 0);
 
-        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, speedPlayer, nickname, idPlayer), APPEND);
+        QMap <QString, qreal> sizePlayer;
+        sizePlayer.insert("width", 50);
+        sizePlayer.insert("height", 50);
+
+        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, speedPlayer, sizePlayer, nickname, idPlayer), APPEND);
         sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
         sendAll(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getScene()));
         return;

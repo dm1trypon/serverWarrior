@@ -32,7 +32,8 @@ SOURCES += \
     gameobjects.cpp \
     workjson.cpp \
     animation.cpp \
-    scene.cpp
+    scene.cpp \
+    collision.cpp
 
 HEADERS += \
         widget.h \
@@ -41,7 +42,8 @@ HEADERS += \
     gameobjects.h \
     workjson.h \
     animation.h \
-    scene.h
+    scene.h \
+    collision.h
 
 FORMS += \
         widget.ui

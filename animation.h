@@ -2,6 +2,7 @@
 #define ANIMATION_H
 
 #include "player.h"
+#include "collision.h"
 
 #include <QObject>
 #include <QTimer>
@@ -22,6 +23,7 @@ private slots:
 private:
     const int FPS = 10;
 
+    Collision _collision;
     QTimer _animationTimer;
 };
 

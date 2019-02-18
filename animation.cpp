@@ -30,9 +30,39 @@ void Animation::process()
 
     foreach (Player *player, players)
     {
+        const QString side = _collision.checkCollision(player, scene["scene"]);
+
+        qreal vertical = 0;
+        qreal horizontal = 0;
+
+        if (side == "inside")
+        {
+
+        }
+
+        if (side == "left")
+        {
+            horizontal = 10;
+        }
+
+        if (side == "right")
+        {
+            horizontal = -10;
+        }
+
+        if (side == "top")
+        {
+            vertical = 10;
+        }
+
+        if (side == "bottom")
+        {
+            vertical = -10;
+        }
+
         QMap <QString, qreal> position;
-        position.insert("x", player->getPosition()["x"] + player->getSpeed()["speed_x"]);
-        position.insert("y", player->getPosition()["y"] + player->getSpeed()["speed_y"]);
+        position.insert("x", player->getPosition()["x"] + player->getSpeed()["speed_x"] + horizontal);
+        position.insert("y", player->getPosition()["y"] + player->getSpeed()["speed_y"] + vertical);
         player->setPosition(position);
     }
 
