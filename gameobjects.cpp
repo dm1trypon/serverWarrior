@@ -67,6 +67,11 @@ QMap <QString, qreal> GameObjects::generateXY()
     return posXY;
 }
 
+qreal GameObjects::getSpeedPlayers()
+{
+    return speed;
+}
+
 void GameObjects::controlPlayers(const QString &nickname, const QString &key, const bool isHold)
 {
     qDebug() << nickname << key << isHold;
@@ -132,7 +137,7 @@ void GameObjects::controlPlayers(const QString &nickname, const QString &key, co
         speedPlayer.insert("speed_y", 0);
     }
 
-    _players[nickname]->setSpeed(speedPlayer);
+    _players[nickname]->setMaxSpeed(speedPlayer);
     _players[nickname]->setMove(isHold);
 }
 

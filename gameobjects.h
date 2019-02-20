@@ -26,11 +26,12 @@ public:
     void clearList();
     void createScene();
     QMap<QString, Scene *> getScene();
+    qreal getSpeedPlayers();
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
 
-    const qreal speed = 6;
+    const qreal speed = 4;
 
     QMap <QString, Player *> _players;
     QMap <QString, Scene *> _scene;

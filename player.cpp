@@ -1,4 +1,5 @@
 #include "player.h"
+#include "gameobjects.h"
 
 #include <QDebug>
 
@@ -11,10 +12,13 @@ Player::Player(const QMap <QString, qreal> position,
     _width(size["width"]), _height(size["height"]),
     _posX(position["x"]), _posY(position["y"]),
     _speedX(speed["speed_x"]), _speedY(speed["speed_y"]),
+    _maxSpeed(GameObjects::Instance().getSpeedPlayers()),
     _id(id),
     _nickname(nickname)
 {
-    connect(&_speedTimer, &QTimer::timeout, this, &Player::setSlowSpeed);
+    connect(&_speedTimer, &QTimer::timeout, this, &Player::setSpeed);
+    const int timeSpeed = 100;
+    _speedTimer.start(timeSpeed);
 }
 
 QString Player::getNickname()
@@ -70,137 +74,54 @@ bool Player::getMove()
     return _move;
 }
 
-void Player::setSpeed(const QMap <QString, qreal> speed)
+void Player::setMaxSpeed(const QMap <QString, qreal> speed)
 {
-    if (speed["speed_x"] == 0.0)
-    {
-        if (_speedTimer.isActive())
-        {
-            _speedTimer.stop();
-        }
-
-        if (_speedX < 0.0)
-        {
-            _side = "left";
-            _speedCoefX = _speedX;
-            _speedCoefY = _speedY;
-            _speedTimer.start();
-        }
-
-        if (_speedX > 0.0)
-        {
-            _side = "right";
-            _speedCoefX = _speedX;
-            _speedCoefY = _speedY;
-            _speedTimer.start();
-        }
-
-        _speedY = speed["speed_y"];
-
-        return;
-    }
-
-    if (speed["speed_y"] == 0.0)
-    {
-        if (_speedTimer.isActive())
-        {
-            _speedTimer.stop();
-        }
-
-        if (_speedY < 0.0)
-        {
-            _side = "up";
-            _speedCoefX = _speedX;
-            _speedCoefY = _speedY;
-            _speedTimer.start();
-        }
-
-        if (_speedY > 0.0)
-        {
-            _side = "down";
-            _speedCoefX = _speedX;
-            _speedCoefY = _speedY;
-            _speedTimer.start();
-        }
-
-        _speedX = speed["speed_x"];
-
-        return;
-    }
+    _maxSpeedX = speed["speed_x"];
+    _maxSpeedY = speed["speed_y"];
 }
 
-void Player::setSlowSpeed()
+void Player::setSpeed()
 {
-    if (_side == "left")
+    if (_maxSpeedX > 0.0 && _speedX < _maxSpeed)
     {
-        _speedCoefX ++;
-        _speedX = _speedCoefX;
+        _speedX ++;
     }
 
-    if (_side == "right")
+    if (_maxSpeedX < 0.0 && _speedX > -_maxSpeed)
     {
-        _speedCoefX --;
-        _speedX = _speedCoefX;
+        _speedX --;
     }
 
-    if (_side == "up")
+    if (_maxSpeedY > 0.0 && _speedY < _maxSpeed)
     {
-        _speedCoefY ++;
-        _speedY = _speedCoefY;
+        _speedY ++;
     }
 
-    if (_side == "down")
+    if (_maxSpeedY < 0.0 && _speedY > -_maxSpeed)
     {
-        _speedCoefY --;
-        _speedY = _speedCoefY;
+        _speedY --;
     }
 
-    if (_speedCoefX == 0.0)
+    if (_maxSpeedX == 0.0 && _speedX > -_maxSpeedX)
     {
-        _speedTimer.stop();
+        _speedX --;
     }
 
-    if (_speedCoefY == 0.0)
+    if (_maxSpeedX == 0.0 && _speedX < _maxSpeedX)
     {
-        _speedTimer.stop();
+        _speedX ++;
+    }
+
+    if (_maxSpeedY == 0.0 && _speedY > -_maxSpeedY)
+    {
+        _speedY --;
+    }
+
+    if (_maxSpeedY == 0.0 && _speedY < _maxSpeedY)
+    {
+        _speedY ++;
     }
 }
-
-//void Player::setSpeed(const QMap <QString, qreal> speed)
-//{
-//    if (static_cast<int>(speed["speed_x"]) == 0 && static_cast<int>(speed["speed_y"]) == 0)
-//    {
-//        qDebug() << _speedX << _speedY;
-
-//        if (_speedTimer.isActive())
-//        {
-//            _speedTimer.stop();
-//        }
-
-//        if (_speedX != 0.0)
-//        {
-//            _speedCoef = _speedX;
-//        }
-
-//        if (_speedY != 0.0)
-//        {
-//            _speedCoef = _speedY;
-//        }
-
-//        qDebug() << _speedX << _speedY;
-
-//        _speedTimer.start(100);
-//        return;
-//    }
-
-//    if (_speedTimer.isActive())
-//    {
-//        _speedTimer.stop();
-//    }
-
-//    _speedX = speed["speed_x"];
-//    _speedY = speed["speed_y"];
-//}
 
 void Player::setPosition(const QMap <QString, qreal> position)
 {

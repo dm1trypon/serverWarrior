@@ -13,7 +13,7 @@ public:
     Player(QMap <QString, qreal> position, QMap<QString, qreal> speed, QMap<QString, qreal> size, const QString &nickname, const int id, QObject *parent = nullptr);
 
     QString getNickname();
-    void setSpeed(const QMap<QString, qreal> speed);
+    void setMaxSpeed(const QMap<QString, qreal> speed);
     void setMove(bool isHold);
     QMap <QString, qreal> getPosition();
     QMap <QString, qreal> getSpeed();
@@ -22,8 +22,10 @@ public:
     void setPosition(const QMap<QString, qreal> position);
     QMap <QString, qreal> getSize();
     QMap<QString, qreal> getOldPosition();
+
 private slots:
-    void setSlowSpeed();
+    void setSpeed();
+
 private:
     qreal _width;
     qreal _height;
@@ -31,10 +33,11 @@ private:
     qreal _posY;
     qreal _posXold;
     qreal _posYold;
-    qreal _speedX;
-    qreal _speedY;
-    qreal _speedCoefX = 0;
-    qreal _speedCoefY = 0;
+    qreal _speedX = 0;
+    qreal _speedY = 0;
+    qreal _maxSpeedX = 0;
+    qreal _maxSpeedY = 0;
+    qreal _maxSpeed;
     int _life;
     int _id;
     bool _move = false;
