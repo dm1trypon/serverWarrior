@@ -101,7 +101,6 @@ void Server::sendAll(const QString &data)
 {
     foreach (QWebSocket* client, _clientsList)
     {
-        qDebug().noquote() << "Send all clients:" << data;
         client->sendTextMessage(data);
     }
 }

@@ -8,7 +8,7 @@ class Collision
 {
 public:
     Collision();
-    QString checkCollision(Player *player, Scene *scene);
+    QString checkCollisionScene(Player *player, Scene *scene);
     bool checkCollisionPlayers(Player *player, QMap<QString, Player *> players);
 };
 

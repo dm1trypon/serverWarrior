@@ -96,6 +96,30 @@ void GameObjects::controlPlayers(const QString &nickname, const QString &key, co
         speedPlayer.insert("speed_y", 0);
     }
 
+    if (key == "left_up")
+    {
+        speedPlayer.insert("speed_x", -speed);
+        speedPlayer.insert("speed_y", -speed);
+    }
+
+    if (key == "left_down")
+    {
+        speedPlayer.insert("speed_x", -speed);
+        speedPlayer.insert("speed_y", speed);
+    }
+
+    if (key == "right_up")
+    {
+        speedPlayer.insert("speed_x", speed);
+        speedPlayer.insert("speed_y", -speed);
+    }
+
+    if (key == "right_down")
+    {
+        speedPlayer.insert("speed_x", speed);
+        speedPlayer.insert("speed_y", speed);
+    }
+
     if (isKeyboardSticking(nickname, speedPlayer, isHold))
     {
         qWarning() << "Warning! Sticking keybord, check client!";

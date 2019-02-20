@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include <QDebug>
+
 Player::Player(const QMap <QString, qreal> position,
                const QMap <QString, qreal> speed,
                const QMap <QString, qreal> size,
@@ -12,7 +14,7 @@ Player::Player(const QMap <QString, qreal> position,
     _id(id),
     _nickname(nickname)
 {
-
+    connect(&_speedTimer, &QTimer::timeout, this, &Player::setSlowSpeed);
 }
 
 QString Player::getNickname()
@@ -70,9 +72,135 @@ bool Player::getMove()
 
 void Player::setSpeed(const QMap <QString, qreal> speed)
 {
-    _speedX = speed["speed_x"];
-    _speedY = speed["speed_y"];
+    if (speed["speed_x"] == 0.0)
+    {
+        if (_speedTimer.isActive())
+        {
+            _speedTimer.stop();
+        }
+
+        if (_speedX < 0.0)
+        {
+            _side = "left";
+            _speedCoefX = _speedX;
+            _speedCoefY = _speedY;
+            _speedTimer.start();
+        }
+
+        if (_speedX > 0.0)
+        {
+            _side = "right";
+            _speedCoefX = _speedX;
+            _speedCoefY = _speedY;
+            _speedTimer.start();
+        }
+
+        _speedY = speed["speed_y"];
+
+        return;
+    }
+
+    if (speed["speed_y"] == 0.0)
+    {
+        if (_speedTimer.isActive())
+        {
+            _speedTimer.stop();
+        }
+
+        if (_speedY < 0.0)
+        {
+            _side = "up";
+            _speedCoefX = _speedX;
+            _speedCoefY = _speedY;
+            _speedTimer.start();
+        }
+
+        if (_speedY > 0.0)
+        {
+            _side = "down";
+            _speedCoefX = _speedX;
+            _speedCoefY = _speedY;
+            _speedTimer.start();
+        }
+
+        _speedX = speed["speed_x"];
+
+        return;
+    }
 }
+
+void Player::setSlowSpeed()
+{
+    if (_side == "left")
+    {
+        _speedCoefX ++;
+        _speedX = _speedCoefX;
+    }
+
+    if (_side == "right")
+    {
+        _speedCoefX --;
+        _speedX = _speedCoefX;
+    }
+
+    if (_side == "up")
+    {
+        _speedCoefY ++;
+        _speedY = _speedCoefY;
+    }
+
+    if (_side == "down")
+    {
+        _speedCoefY --;
+        _speedY = _speedCoefY;
+    }
+
+    if (_speedCoefX == 0.0)
+    {
+        _speedTimer.stop();
+    }
+
+    if (_speedCoefY == 0.0)
+    {
+        _speedTimer.stop();
+    }
+}
+
+//void Player::setSpeed(const QMap <QString, qreal> speed)
+//{
+//    if (static_cast<int>(speed["speed_x"]) == 0 && static_cast<int>(speed["speed_y"]) == 0)
+//    {
+//        qDebug() << _speedX << _speedY;
+
+//        if (_speedTimer.isActive())
+//        {
+//            _speedTimer.stop();
+//        }
+
+//        if (_speedX != 0.0)
+//        {
+//            _speedCoef = _speedX;
+//        }
+
+//        if (_speedY != 0.0)
+//        {
+//            _speedCoef = _speedY;
+//        }
+
+//        qDebug() << _speedX << _speedY;
+
+//        _speedTimer.start(100);
+//        return;
+//    }
+
+//    if (_speedTimer.isActive())
+//    {
+//        _speedTimer.stop();
+//    }
+
+//    _speedX = speed["speed_x"];
+//    _speedY = speed["speed_y"];
+//}
 
 void Player::setPosition(const QMap <QString, qreal> position)
 {

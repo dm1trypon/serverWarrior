@@ -1,12 +1,13 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include "player.h"
 #include "collision.h"
 
 #include <QObject>
 #include <QTimer>
 #include <QMap>
+
+class Player;
 
 class Animation : public QObject
 {

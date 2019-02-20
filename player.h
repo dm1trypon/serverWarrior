@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QTimer>
 
 class Player : public QObject
 {
@@ -21,6 +22,8 @@ public:
     void setPosition(const QMap<QString, qreal> position);
     QMap <QString, qreal> getSize();
     QMap<QString, qreal> getOldPosition();
+private slots:
+    void setSlowSpeed();
 private:
     qreal _width;
     qreal _height;
@@ -30,10 +33,14 @@ private:
     qreal _posYold;
     qreal _speedX;
     qreal _speedY;
+    qreal _speedCoefX = 0;
+    qreal _speedCoefY = 0;
     int _life;
     int _id;
     bool _move = false;
+    QTimer _speedTimer;
     QString _nickname;
+    QString _side;
     void setOldPosition(const QMap<QString, qreal> oldPosition);
 };
 
