@@ -33,7 +33,8 @@ SOURCES += \
     workjson.cpp \
     animation.cpp \
     scene.cpp \
-    collision.cpp
+    collision.cpp \
+    control.cpp
 
 HEADERS += \
         widget.h \
@@ -43,7 +44,8 @@ HEADERS += \
     workjson.h \
     animation.h \
     scene.h \
-    collision.h
+    collision.h \
+    control.h
 
 FORMS += \
         widget.ui

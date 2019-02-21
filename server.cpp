@@ -73,15 +73,11 @@ void Server::processTextMessage(const QString &data)
         int idPlayer = GameObjects::Instance().generateId();
         QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
 
-        QMap <QString, qreal> speedPlayer;
-        speedPlayer.insert("speed_x", 0);
-        speedPlayer.insert("speed_y", 0);
-
         QMap <QString, qreal> sizePlayer;
         sizePlayer.insert("width", 50);
         sizePlayer.insert("height", 50);
 
-        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, speedPlayer, sizePlayer, nickname, idPlayer), APPEND);
+        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
         sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
         sendAll(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getScene()));
         return;
@@ -93,7 +89,8 @@ void Server::processTextMessage(const QString &data)
         QString key = WorkJson::Instance().fromJson(data).value("key").toString();
         bool isHold = WorkJson::Instance().fromJson(data).value("hold").toBool();
         qDebug() << "Method:" << WorkJson::Instance().fromJson(data).value("method");
-        GameObjects::Instance().controlPlayers(nickname, key, isHold);
+
+        _control.controlPlayers(nickname, key, isHold);
     }
 }
 

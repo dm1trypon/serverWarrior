@@ -9,7 +9,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QListWidget>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QTimer>
 
 namespace Ui {
@@ -33,11 +33,14 @@ private:
     Animation _animation;
 
     Ui::Widget *ui;
-    QVBoxLayout *_mainLayout;
+    QGridLayout *_mainLayout;
     QLabel *_labelPort;
     QLabel *_labelList;
     QLabel *_labelInfo;
+    QLabel *_labelSize;
     QLineEdit *_inputPort;
+    QLineEdit *_inputWidth;
+    QLineEdit *_inputHeight;
     QListWidget *_listClients;
     QPushButton *_buttonStart;
     QPushButton *_buttonStop;
@@ -46,12 +49,14 @@ private:
 
     void createElements();
 
-    void timer();
+    void timers(const bool isStarted);
     void stopServer();
     void onStopServer();
     void onStartedServer();
     void onErrorServer();
 
+    void toSizeScene();
+    void elements(const bool isStarted);
 private slots:
     void showClients();
     void startServer();

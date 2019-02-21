@@ -15,6 +15,11 @@ GameObjects &GameObjects::Instance()
     return theSingleInstance;
 }
 
+void GameObjects::setSizeScene(const QMap <QString, int> sizeScene)
+{
+    _sizeScene = sizeScene;
+}
+
 void GameObjects::createScene()
 {
     QMap <QString, qreal> position;
@@ -22,8 +27,8 @@ void GameObjects::createScene()
     position.insert("y", 0);
 
     QMap <QString, qreal> size;
-    size.insert("width", 1920);
-    size.insert("height", 1080);
+    size.insert("width", _sizeScene["width"]);
+    size.insert("height", _sizeScene["height"]);
 
     _scene.insert("scene", new Scene(position, size));
 }
@@ -70,80 +75,6 @@ QMap <QString, qreal> GameObjects::generateXY()
 qreal GameObjects::getSpeedPlayers()
 {
     return speed;
-}
-
-void GameObjects::controlPlayers(const QString &nickname, const QString &key, const bool isHold)
-{
-    qDebug() << nickname << key << isHold;
-    QMap <QString, qreal> speedPlayer;
-
-    if (key == "up")
-    {
-        speedPlayer.insert("speed_x", 0);
-        speedPlayer.insert("speed_y", -speed);
-    }
-
-    if (key == "down")
-    {
-        speedPlayer.insert("speed_x", 0);
-        speedPlayer.insert("speed_y", speed);
-    }
-
-    if (key == "left")
-    {
-        speedPlayer.insert("speed_x", -speed);
-        speedPlayer.insert("speed_y", 0);
-    }
-
-    if (key == "right")
-    {
-        speedPlayer.insert("speed_x", speed);
-        speedPlayer.insert("speed_y", 0);
-    }
-
-    if (key == "left_up")
-    {
-        speedPlayer.insert("speed_x", -speed);
-        speedPlayer.insert("speed_y", -speed);
-    }
-
-    if (key == "left_down")
-    {
-        speedPlayer.insert("speed_x", -speed);
-        speedPlayer.insert("speed_y", speed);
-    }
-
-    if (key == "right_up")
-    {
-        speedPlayer.insert("speed_x", speed);
-        speedPlayer.insert("speed_y", -speed);
-    }
-
-    if (key == "right_down")
-    {
-        speedPlayer.insert("speed_x", speed);
-        speedPlayer.insert("speed_y", speed);
-    }
-
-    if (isKeyboardSticking(nickname, speedPlayer, isHold))
-    {
-        qWarning() << "Warning! Sticking keybord, check client!";
-        return;
-    }
-
-    if (!isHold)
-    {
-        speedPlayer.insert("speed_x", 0);
-        speedPlayer.insert("speed_y", 0);
-    }
-
-    _players[nickname]->setMaxSpeed(speedPlayer);
-    _players[nickname]->setMove(isHold);
-}
-
-bool GameObjects::isKeyboardSticking(const QString &nickname, const QMap <QString, qreal> speedPlayer, const bool isHold)
-{
-    return _players[nickname]->getSpeed() == speedPlayer && _players[nickname]->getMove() == isHold;
 }
 
 QMap <QString, Player *> GameObjects::getPlayers()

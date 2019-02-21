@@ -8,10 +8,10 @@ class Scene : public QObject
 {
     Q_OBJECT
 public:
-    Scene(const QMap<QString, qreal> position, const QMap<QString, qreal> size, QObject *parent = nullptr);
+    Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> size, QObject *parent = nullptr);
 
-    QMap<QString, qreal> getSize();
-    QMap<QString, qreal> getPosition();
+    QMap <QString, qreal> getSize();
+    QMap <QString, qreal> getPosition();
 private:
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _size;

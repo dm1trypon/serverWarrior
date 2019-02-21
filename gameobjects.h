@@ -19,14 +19,16 @@ public:
     void toPlayers(const QString &nickname, Player *player, const bool operation);
 
     int generateId();
-    QMap<QString, qreal> generateXY();
-    QMap<QString, Player *> getPlayers();
+    QMap <QString, qreal> generateXY();
+    QMap <QString, Player *> getPlayers();
     void controlPlayers(const QString &nickname, const QString &key, const bool isHold);
-    QMap<QString, Player *> setPlayers(QMap<QString, Player *> players);
+    QMap <QString, Player *> setPlayers(QMap <QString, Player *> players);
     void clearList();
     void createScene();
-    QMap<QString, Scene *> getScene();
+    QMap <QString, Scene *> getScene();
     qreal getSpeedPlayers();
+    void setSizeScene(const QMap <QString, int> sizeScene);
+
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
@@ -35,7 +37,9 @@ private:
 
     QMap <QString, Player *> _players;
     QMap <QString, Scene *> _scene;
-    bool isKeyboardSticking(const QString &nickname, const QMap<QString, qreal> speedPlayer, const bool isHold);
+    QMap <QString, int> _sizeScene;
+
+    bool isKeyboardSticking(const QString &nickname, const QMap <QString, qreal> speedPlayer, const bool isHold);
 };
 
 #endif // GAMEOBJECTS_H

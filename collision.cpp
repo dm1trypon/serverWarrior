@@ -59,7 +59,6 @@ bool Collision::checkCollisionPlayers(Player *player, QMap <QString, Player *> p
             const qreal distHeight = positionEnemyPlayer["y"] - positionPlayer["y"];
             const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
 
-
             if (distance < sizePlayer["width"])
             {
                 qDebug() << positionPlayer << positionEnemyPlayer << distance << distWidth << distHeight;
