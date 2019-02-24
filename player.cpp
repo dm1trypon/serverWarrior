@@ -24,6 +24,28 @@ QString Player::getNickname()
     return _nickname;
 }
 
+void Player::setShot()
+{
+    if (!_isShot)
+    {
+        _isShot = true;
+        return;
+    }
+
+    _isShot = false;
+}
+
+
+QTimer *Player::getShotTimer()
+{
+    return _shotTimer;
+}
+
+bool Player::getShot()
+{
+    return _isShot;
+}
+
 QMap <QString, qreal> Player::getPosition()
 {
     QMap <QString, qreal> position;
@@ -48,7 +70,7 @@ QMap <QString, qreal> Player::getSpeed()
     return speed;
 }
 
-int Player::getIdPlayer()
+int Player::getId()
 {
     return _id;
 }

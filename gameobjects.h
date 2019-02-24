@@ -2,7 +2,9 @@
 #define GAMEOBJECTS_H
 
 #include "player.h"
+#include "bullet.h"
 #include "scene.h"
+#include "workjson.h"
 
 #include <QObject>
 #include <QMap>
@@ -29,6 +31,9 @@ public:
     qreal getSpeedPlayers();
     void setSizeScene(const QMap <QString, int> sizeScene);
 
+    void toBullets(const int id, Bullet *bullet);
+    QMap <int, Bullet *> getBullets();
+    void delBullets(const QString &nickname, const int id);
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
@@ -36,10 +41,12 @@ private:
     const qreal speed = 4;
 
     QMap <QString, Player *> _players;
+    QMap <int, Bullet *> _bullets;
     QMap <QString, Scene *> _scene;
     QMap <QString, int> _sizeScene;
 
     bool isKeyboardSticking(const QString &nickname, const QMap <QString, qreal> speedPlayer, const bool isHold);
+    void setBulletSpeed(Bullet *bullet);
 };
 
 #endif // GAMEOBJECTS_H

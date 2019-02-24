@@ -25,9 +25,36 @@ void Animation::stop()
 
 void Animation::process()
 {   
-    QMap <QString, Player *> players = GameObjects::Instance().getPlayers();
     QMap <QString, Scene *> scene = GameObjects::Instance().getScene();
 
+    onPlayers(GameObjects::Instance().getPlayers(), scene);
+    onBullets(GameObjects::Instance().getBullets(), GameObjects::Instance().getPlayers(), scene);
+
+    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(), scene));
+}
+
+void Animation::onBullets(const QMap <int, Bullet *> bullets, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene)
+{
+    foreach (Bullet *bullet, bullets)
+    {
+        QMap <QString, qreal> position = bullet->getPosition();
+        QMap <QString, qreal> speedMove = bullet->getSpeedMove();
+
+        QMap <QString, qreal> newPosition;
+        newPosition.insert("x", position["x"] + speedMove["speed_x"]);
+        newPosition.insert("y", position["y"] + speedMove["speed_y"]);
+
+        bullet->setPosition(newPosition);
+
+        if (_collision.checkCollisionBullets(bullet, players, scene))
+        {
+            GameObjects::Instance().delBullets(bullet->getNickname(), bullet->getId());
+        }
+    }
+}
+
+void Animation::onPlayers(const QMap <QString, Player *> players, const QMap <QString, Scene *> scene)
+{
     foreach (Player *player, players)
     {
         const QString side = _collision.checkCollisionScene(player, scene["scene"]);
@@ -60,19 +87,21 @@ void Animation::process()
             vertical = -10;
         }
 
-        QMap <QString, qreal> position;
-        position.insert("x", player->getPosition()["x"] + player->getSpeed()["speed_x"] + horizontal);
-        position.insert("y", player->getPosition()["y"] + player->getSpeed()["speed_y"] + vertical);
-        player->setPosition(position);
+        QMap <QString, qreal> position = player->getPosition();
+        QMap <QString, qreal> speed = player->getSpeed();
+
+        QMap <QString, qreal> newPosition;
+        newPosition.insert("x", position["x"] + speed["speed_x"] + horizontal);
+        newPosition.insert("y", position["y"] + speed["speed_y"] + vertical);
+        player->setPosition(newPosition);
 
         if (_collision.checkCollisionPlayers(player, players))
         {
-            QMap <QString, qreal> position;
-            position.insert("x", player->getPosition()["x"] - player->getSpeed()["speed_x"] + horizontal);
-            position.insert("y", player->getPosition()["y"] - player->getSpeed()["speed_y"] + vertical);
-            player->setPosition(position);
+            QMap <QString, qreal> newPosition;
+            newPosition.insert("x", position["x"] - speed["speed_x"] + horizontal);
+            newPosition.insert("y", position["y"] - speed["speed_y"] + vertical);
+            player->setPosition(newPosition);
         }
     }
 
-    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(players, scene));
 }

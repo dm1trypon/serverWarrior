@@ -5,6 +5,7 @@
 
 #include <QWebSocket>
 #include <QJsonValue>
+#include <QJsonObject>
 
 Server::Server(const quint16 port, QObject *parent) :
     QObject(parent),
@@ -55,9 +56,11 @@ void Server::processTextMessage(const QString &data)
 
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
+    const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
+
     if (WorkJson::Instance().fromJson(data).value("method") == "verify")
     {
-        QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
+        const QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
 
         if (GameObjects::Instance().isExistPlayer(nickname))
         {
@@ -70,34 +73,75 @@ void Server::processTextMessage(const QString &data)
         }
 
         _nameClients.insert(pClient, nickname);
-        int idPlayer = GameObjects::Instance().generateId();
-        QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
+
+        const int idPlayer = GameObjects::Instance().generateId();
+        const QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
 
         QMap <QString, qreal> sizePlayer;
         sizePlayer.insert("width", 50);
         sizePlayer.insert("height", 50);
 
         GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
+
         sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
-        sendAll(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getScene()));
+        sendAll(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(), GameObjects::Instance().getScene()));
         return;
     }
 
     if (WorkJson::Instance().fromJson(data).value("method") == "control")
     {
-        QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
-        QString key = WorkJson::Instance().fromJson(data).value("key").toString();
-        bool isHold = WorkJson::Instance().fromJson(data).value("hold").toBool();
+        const QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
+        const QString key = WorkJson::Instance().fromJson(data).value("key").toString();
+        const bool isHold = WorkJson::Instance().fromJson(data).value("hold").toBool();
         qDebug() << "Method:" << WorkJson::Instance().fromJson(data).value("method");
 
         _control.controlPlayers(nickname, key, isHold);
+        return;
+    }
+
+    if (WorkJson::Instance().fromJson(data).value("method") == "shot")
+    {
+        const QString nickname = dataJsonObj.value("nickname").toString();
+
+        qreal clickX = dataJsonObj.value("x").toDouble();
+        qreal clickY = dataJsonObj.value("y").toDouble();
+
+        QMap <QString, qreal> click;
+        click.insert("x", clickX);
+        click.insert("y", clickY);
+
+        QMap <QString, qreal> sizeBullet;
+        sizeBullet.insert("width", 10);
+        sizeBullet.insert("height", 10);
+
+        const int idBullet = GameObjects::Instance().generateId();
+
+        Player *player = GameObjects::Instance().getPlayers()[nickname];
+
+        const QMap <QString, qreal> sizePlayer = player->getSize();
+        const QMap <QString, qreal> positionPlayer = player->getPosition();
+
+        QMap <QString, qreal> positionPlayerCenter;
+        positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2);
+        positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2);
+
+        if (!player->getShot())
+        {
+            return;
+        }
+
+        player->setShot();
+        player->getShotTimer()->singleShot(1000, player, &Player::setShot);
+        GameObjects::Instance().toBullets(idBullet, new Bullet(positionPlayerCenter, sizeBullet, click, nickname, idBullet));
+
+        return;
     }
 }
 
 void Server::sendAll(const QString &data)
 {
     foreach (QWebSocket* client, _clientsList)
-    {
+    {   
         client->sendTextMessage(data);
     }
 }

@@ -154,7 +154,7 @@ void Widget::showClients()
         if (_fullInfo)
         {
             _listClients->addItem(player->getNickname() + " {PLAYER_ID: "
-                                  + QString::number(player->getIdPlayer())
+                                  + QString::number(player->getId())
                                   + ", POSITION: [" + QString::number(player->getPosition()["x"])
                                   + ":" + QString::number(player->getPosition()["y"])
                                   + "], MOVE: " + QString::number(player->getMove()) + "}");

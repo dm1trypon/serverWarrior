@@ -39,7 +39,7 @@ QString Collision::checkCollisionScene(Player *player, Scene *scene)
     return "inside";
 }
 
-bool Collision::checkCollisionPlayers(Player *player, QMap <QString, Player *> players)
+bool Collision::checkCollisionPlayers(Player *player, const QMap <QString, Player *> players)
 {
     const QMap <QString, qreal> sizePlayer = player->getSize();
 
@@ -65,6 +65,68 @@ bool Collision::checkCollisionPlayers(Player *player, QMap <QString, Player *> p
                 return true;
             }
         }
+    }
+
+    return false;
+}
+
+bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene)
+{
+    const QMap <QString, qreal> sizeBullet = bullet->getSize();
+
+    bool collision = false;
+
+    QMap <QString, qreal> positionBullet = bullet->getPosition();
+    positionBullet["x"] = positionBullet["x"] + sizeBullet["width"] / 2;
+    positionBullet["y"] = positionBullet["y"] + sizeBullet["height"] / 2;
+
+    foreach (Player *enemyPlayer, players)
+    {
+        if (bullet->getNickname() != enemyPlayer->getNickname())
+        {
+            QMap <QString, qreal> positionEnemyPlayer = enemyPlayer->getPosition();
+            const QMap <QString, qreal> sizeEnemyPlayer = enemyPlayer->getSize();
+            positionEnemyPlayer["x"] = positionEnemyPlayer["x"] + sizeEnemyPlayer["width"] / 2;
+            positionEnemyPlayer["y"] = positionEnemyPlayer["y"] + sizeEnemyPlayer["height"] / 2;
+
+            const qreal distWidth = positionEnemyPlayer["x"] - positionBullet["x"];
+            const qreal distHeight = positionEnemyPlayer["y"] - positionBullet["y"];
+            const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
+
+            if (distance < sizeBullet["width"] / 2 + sizeEnemyPlayer["width"] / 2)
+            {
+                collision = true;
+                break;
+            }
+        }
+    }
+
+    const QMap <QString, qreal> positionScene = scene["scene"]->getPosition();
+    const QMap <QString, qreal> sizeScene = scene["scene"]->getSize();
+
+    if (positionBullet["x"] < positionScene["x"])
+    {
+        collision = true;
+    }
+
+    if (positionBullet["x"] + sizeBullet["width"] > positionScene["x"] + sizeScene["width"])
+    {
+        collision = true;
+    }
+
+    if (positionBullet["y"] < positionScene["y"])
+    {
+        collision = true;
+    }
+
+    if (positionBullet["y"] + sizeBullet["height"] > positionScene["y"] + sizeScene["height"])
+    {
+        collision = true;
+    }
+
+    if (collision)
+    {
+        return true;
     }
 
     return false;

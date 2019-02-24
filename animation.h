@@ -8,6 +8,7 @@
 #include <QMap>
 
 class Player;
+class Bullet;
 
 class Animation : public QObject
 {
@@ -26,6 +27,8 @@ private:
 
     Collision _collision;
     QTimer _animationTimer;
+    void onPlayers(const QMap <QString, Player *> players, const QMap <QString, Scene *> scene);
+    void onBullets(const QMap <int, Bullet *> bullets, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene);
 };
 
 #endif // ANIMATION_H

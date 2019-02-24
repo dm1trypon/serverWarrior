@@ -37,18 +37,19 @@ QString WorkJson::toJson(const QString &method)
     return data;
 }
 
-QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QMap <QString, Scene *> scene)
+QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QMap <int, Bullet *> bullets,  const QMap <QString, Scene *> scene)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "objects");
 
     QJsonArray playersJsonArr;
+    QJsonArray bulletsJsonArr;
 
     foreach (Player *player, players)
     {
         QJsonObject playerJsonObj;
         playerJsonObj.insert("nickname", player->getNickname());
-        playerJsonObj.insert("id_player", player->getIdPlayer());
+        playerJsonObj.insert("id_player", player->getId());
 
         QMap <QString, qreal> position = player->getPosition();
         playerJsonObj.insert("pos_x", position["x"]);
@@ -62,6 +63,25 @@ QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QM
     }
 
     dataJsonObj.insert("players", playersJsonArr);
+
+    foreach (Bullet *bullet, bullets)
+    {
+        QJsonObject bulletJsonObj;
+        bulletJsonObj.insert("nickname", bullet->getNickname());
+        bulletJsonObj.insert("id_bullet", bullet->getId());
+
+        QMap <QString, qreal> position = bullet->getPosition();
+        bulletJsonObj.insert("pos_x", position["x"]);
+        bulletJsonObj.insert("pos_y", position["y"]);
+
+        QMap <QString, qreal> size = bullet->getSize();
+        bulletJsonObj.insert("width", size["width"]);
+        bulletJsonObj.insert("height", size["height"]);
+
+        bulletsJsonArr.append(bulletJsonObj);
+    }
+
+    dataJsonObj.insert("bullets", bulletsJsonArr);
 
     QJsonObject sceneJsonObj;
 
@@ -110,6 +130,18 @@ QString WorkJson::toJsonDisconnection(const QString &nickname)
     dataJsonObj.insert("nickname", nickname);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+    return data;
+}
+
+QString WorkJson::toJsonRemove(const QString &nickname, const int id)
+{
+    QJsonObject dataJsonObj;
+    dataJsonObj.insert("method", "remove");
+    dataJsonObj.insert("nickname", nickname);
+    dataJsonObj.insert("id_bullet", id);
+    QJsonDocument dataJsonDoc(dataJsonObj);
+    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+    qDebug().noquote() << "To remove:" << data;
     return data;
 }
 

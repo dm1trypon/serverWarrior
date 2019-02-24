@@ -2,6 +2,7 @@
 #define COLLISION_H
 
 #include "player.h"
+#include "bullet.h"
 #include "scene.h"
 
 class Collision
@@ -9,7 +10,8 @@ class Collision
 public:
     Collision();
     QString checkCollisionScene(Player *player, Scene *scene);
-    bool checkCollisionPlayers(Player *player, QMap <QString, Player *> players);
+    bool checkCollisionPlayers(Player *player, const QMap <QString, Player *> players);
+    bool checkCollisionBullets(Bullet *bullet, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene);
 };
 
 #endif // COLLISION_H

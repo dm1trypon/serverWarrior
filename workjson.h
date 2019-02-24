@@ -2,6 +2,7 @@
 #define WORKJSON_H
 
 #include "player.h"
+#include "bullet.h"
 #include "scene.h"
 
 #include <QObject>
@@ -25,10 +26,11 @@ public:
     QString toJson(const QString &method);
     QString toJsonError(const QString &error);
     QString toJsonConnection(const QString &nickname, const int idPlayer, const QMap<QString, qreal> positionPlayer);
-    QString toJsonObjects(QMap<QString, Player *> players, const QMap<QString, Scene *> scene);
+    QString toJsonObjects(QMap<QString, Player *> players, const QMap<int, Bullet *> bullets, const QMap<QString, Scene *> scene);
     void toSend(const QString &data);
     QString toJsonDisconnection(const QString &nickname);
 
+    QString toJsonRemove(const QString &nickname, const int id);
 signals:
     void signalToSend(QString);
 };
