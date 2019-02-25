@@ -96,6 +96,7 @@ bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <QString, Playe
             if (distance < sizeBullet["width"] / 2 + sizeEnemyPlayer["width"] / 2)
             {
                 collision = true;
+                enemyPlayer->setLife(enemyPlayer->getLife() - 1);
                 break;
             }
         }
