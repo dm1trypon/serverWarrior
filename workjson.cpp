@@ -159,6 +159,8 @@ QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QM
         playerJsonObj.insert("width", size["width"]);
         playerJsonObj.insert("height", size["height"]);
 
+        playerJsonObj.insert("life", player->getLife());
+
         playersJsonArr.append(playerJsonObj);
     }
 

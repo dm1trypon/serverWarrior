@@ -134,6 +134,16 @@ void Player::setSpeed()
     }
 }
 
+int Player::getLife()
+{
+    return _life;
+}
+
+void Player::setLife(const int life)
+{
+    _life = life;
+}
+
 void Player::setPosition(const QMap <QString, qreal> position)
 {
     QMap <QString, qreal> oldPosition;
