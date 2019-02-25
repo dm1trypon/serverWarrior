@@ -1,8 +1,6 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include "control.h"
-
 #include <QWebSocketServer>
 #include <QMap>
 
@@ -34,10 +32,6 @@ private:
     bool _error = true;
 
     QWebSocketServer *_webSocketServer;
-    QMap <QWebSocket *, QString> _nameClients;
-    QList <QWebSocket *> _clientsList;
-
-    Control _control;
 };
 
 #endif // SERVER_H

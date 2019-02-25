@@ -4,16 +4,25 @@
 #include "player.h"
 #include "bullet.h"
 #include "scene.h"
+#include "control.h"
 
 #include <QObject>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QWebSocket>
 
 class WorkJson : public QObject
 {
     Q_OBJECT
 
 private:
+    const bool REMOVE = false;
+    const bool APPEND = true;
+
+    Control _control;
+    QList <QWebSocket *> _clientsList;
+    QMap <QWebSocket *, QString> _nameClients;
+
     WorkJson(const WorkJson& root) = delete;
     WorkJson& operator = (const WorkJson&) = delete;
 
@@ -21,7 +30,6 @@ public:
     WorkJson(){}
     static WorkJson& Instance();
 
-    QJsonObject fromJson(const QString &data);
     QJsonValue parseJson(const QString &field, const QJsonObject dataJsonObj);
     QString toJson(const QString &method);
     QString toJsonError(const QString &error);
@@ -31,6 +39,12 @@ public:
     QString toJsonDisconnection(const QString &nickname);
 
     QString toJsonRemove(const QString &nickname, const int id);
+    void onMethod(const QString &data, QWebSocket *pClient);
+    QList <QWebSocket *> getClientsList();
+
+    void setClientsList(QList<QWebSocket *> clientsList);
+    void setNameClients(QMap<QWebSocket *, QString> nameClients);
+    QMap <QWebSocket *, QString> getNameClients();
 signals:
     void signalToSend(QString);
 };

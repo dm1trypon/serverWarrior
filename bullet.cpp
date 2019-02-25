@@ -7,8 +7,8 @@ Bullet::Bullet(const QMap <QString, qreal> position,
                const int id, QObject *parent) :
     QObject (parent),
     _position(position),
-    _size(size),
     _click(click),
+    _size(size),
     _nickname(nickname),
     _id(id)
 {

@@ -90,7 +90,7 @@ void GameObjects::toBullets(const int id, Bullet *bullet)
 void GameObjects::delBullets(const QString &nickname, const int id)
 {
     _bullets.remove(id);
-    WorkJson::Instance().toSend( WorkJson::Instance().toJsonRemove(nickname, id));
+    WorkJson::Instance().toSend(WorkJson::Instance().toJsonRemove(nickname, id));
 }
 
 int GameObjects::generateId()

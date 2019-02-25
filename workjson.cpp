@@ -1,4 +1,5 @@
 #include "workjson.h"
+#include "gameobjects.h"
 
 #include <QDebug>
 #include <QMap>
@@ -10,9 +11,108 @@ WorkJson &WorkJson::Instance()
     return theSingleInstance;
 }
 
-QJsonObject WorkJson::fromJson(const QString &data)
+void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
 {
-    return QJsonDocument::fromJson(data.toUtf8()).object();
+    const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
+
+    if (dataJsonObj.value("method") == "verify")
+    {
+        const QString nickname = dataJsonObj.value("nickname").toString();
+
+        if (GameObjects::Instance().isExistPlayer(nickname))
+        {
+            qWarning() << "Nickname already use!";
+            pClient->sendTextMessage(toJsonError("Nickname already use!"));
+            _clientsList.removeAll(pClient);
+            pClient->close();
+            pClient->deleteLater();
+            return;
+        }
+
+        _nameClients.insert(pClient, nickname);
+
+        const int idPlayer = GameObjects::Instance().generateId();
+        const QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
+
+        QMap <QString, qreal> sizePlayer;
+        sizePlayer.insert("width", 100);
+        sizePlayer.insert("height", 100);
+
+        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
+
+        toSend(toJsonConnection(nickname, idPlayer, positionPlayer));
+        toSend(toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(), GameObjects::Instance().getScene()));
+        return;
+    }
+
+    if (dataJsonObj.value("method") == "control")
+    {
+        const QString nickname = dataJsonObj.value("nickname").toString();
+        const QString key = dataJsonObj.value("key").toString();
+        const bool isHold = dataJsonObj.value("hold").toBool();
+        qDebug() << "Method:" << dataJsonObj.value("method");
+
+        _control.controlPlayers(nickname, key, isHold);
+        return;
+    }
+
+    if (dataJsonObj.value("method") == "shot")
+    {
+        const QString nickname = dataJsonObj.value("nickname").toString();
+
+        qreal clickX = dataJsonObj.value("x").toDouble();
+        qreal clickY = dataJsonObj.value("y").toDouble();
+
+        QMap <QString, qreal> click;
+        click.insert("x", clickX);
+        click.insert("y", clickY);
+
+        QMap <QString, qreal> sizeBullet;
+        sizeBullet.insert("width", 30);
+        sizeBullet.insert("height", 30);
+
+        const int idBullet = GameObjects::Instance().generateId();
+
+        Player *player = GameObjects::Instance().getPlayers()[nickname];
+
+        const QMap <QString, qreal> sizePlayer = player->getSize();
+        const QMap <QString, qreal> positionPlayer = player->getPosition();
+
+        QMap <QString, qreal> positionPlayerCenter;
+        positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2);
+        positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2);
+
+        if (!player->getShot())
+        {
+            return;
+        }
+
+        player->setShot();
+        player->getShotTimer()->singleShot(player->getShotSpeed(), player, &Player::setShot);
+        GameObjects::Instance().toBullets(idBullet, new Bullet(positionPlayerCenter, sizeBullet, click, nickname, idBullet));
+
+        return;
+    }
+}
+
+void WorkJson::setClientsList(QList <QWebSocket *> clientsList)
+{
+    _clientsList = clientsList;
+}
+
+QList <QWebSocket *> WorkJson::getClientsList()
+{
+    return _clientsList;
+}
+
+void WorkJson::setNameClients(QMap <QWebSocket *, QString> nameClients)
+{
+    _nameClients = nameClients;
+}
+
+QMap <QWebSocket *, QString> WorkJson::getNameClients()
+{
+    return _nameClients;
 }
 
 QJsonValue WorkJson::parseJson(const QString &field, const QJsonObject dataJsonObj)
@@ -141,7 +241,6 @@ QString WorkJson::toJsonRemove(const QString &nickname, const int id)
     dataJsonObj.insert("id_bullet", id);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
-    qDebug().noquote() << "To remove:" << data;
     return data;
 }
 

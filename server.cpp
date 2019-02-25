@@ -23,13 +23,17 @@ Server::Server(const quint16 port, QObject *parent) :
     _error = false;
 
     GameObjects::Instance().createScene();
+
+    connect(&WorkJson::Instance(), &WorkJson::signalToSend, this, &Server::sendAll);
 }
 
 Server::~Server()
 {
     qDebug() << "Stop server...";
+    QList <QWebSocket* > clientsList = WorkJson::Instance().getClientsList();
     _webSocketServer->close();
-    qDeleteAll(_clientsList.begin(), _clientsList.end());
+    qDeleteAll(clientsList.begin(), clientsList.end());
+    WorkJson::Instance().setClientsList(clientsList);
 }
 
 bool Server::getError()
@@ -43,11 +47,12 @@ void Server::onNewConnection()
 
     connect(pSocket, &QWebSocket::textMessageReceived, this, &Server::processTextMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &Server::socketDisconnected);
-    connect(&WorkJson::Instance(), &WorkJson::signalToSend, this, &Server::sendAll);
 
     pSocket->sendTextMessage(WorkJson::Instance().toJson("verify"));
 
-    _clientsList << pSocket;
+    QList <QWebSocket* > clientsList = WorkJson::Instance().getClientsList();
+    clientsList << pSocket;
+    WorkJson::Instance().setClientsList(clientsList);
 }
 
 void Server::processTextMessage(const QString &data)
@@ -56,91 +61,12 @@ void Server::processTextMessage(const QString &data)
 
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
-    const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
-
-    if (WorkJson::Instance().fromJson(data).value("method") == "verify")
-    {
-        const QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
-
-        if (GameObjects::Instance().isExistPlayer(nickname))
-        {
-            qWarning() << "Nickname already use!";
-            pClient->sendTextMessage(WorkJson::Instance().toJsonError("Nickname already use!"));
-            _clientsList.removeAll(pClient);
-            pClient->close();
-            pClient->deleteLater();
-            return;
-        }
-
-        _nameClients.insert(pClient, nickname);
-
-        const int idPlayer = GameObjects::Instance().generateId();
-        const QMap <QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
-
-        QMap <QString, qreal> sizePlayer;
-        sizePlayer.insert("width", 50);
-        sizePlayer.insert("height", 50);
-
-        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
-
-        sendAll(WorkJson::Instance().toJsonConnection(nickname, idPlayer, positionPlayer));
-        sendAll(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(), GameObjects::Instance().getScene()));
-        return;
-    }
-
-    if (WorkJson::Instance().fromJson(data).value("method") == "control")
-    {
-        const QString nickname = WorkJson::Instance().fromJson(data).value("nickname").toString();
-        const QString key = WorkJson::Instance().fromJson(data).value("key").toString();
-        const bool isHold = WorkJson::Instance().fromJson(data).value("hold").toBool();
-        qDebug() << "Method:" << WorkJson::Instance().fromJson(data).value("method");
-
-        _control.controlPlayers(nickname, key, isHold);
-        return;
-    }
-
-    if (WorkJson::Instance().fromJson(data).value("method") == "shot")
-    {
-        const QString nickname = dataJsonObj.value("nickname").toString();
-
-        qreal clickX = dataJsonObj.value("x").toDouble();
-        qreal clickY = dataJsonObj.value("y").toDouble();
-
-        QMap <QString, qreal> click;
-        click.insert("x", clickX);
-        click.insert("y", clickY);
-
-        QMap <QString, qreal> sizeBullet;
-        sizeBullet.insert("width", 10);
-        sizeBullet.insert("height", 10);
-
-        const int idBullet = GameObjects::Instance().generateId();
-
-        Player *player = GameObjects::Instance().getPlayers()[nickname];
-
-        const QMap <QString, qreal> sizePlayer = player->getSize();
-        const QMap <QString, qreal> positionPlayer = player->getPosition();
-
-        QMap <QString, qreal> positionPlayerCenter;
-        positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2);
-        positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2);
-
-        if (!player->getShot())
-        {
-            return;
-        }
-
-        player->setShot();
-        player->getShotTimer()->singleShot(1000, player, &Player::setShot);
-        GameObjects::Instance().toBullets(idBullet, new Bullet(positionPlayerCenter, sizeBullet, click, nickname, idBullet));
-
-        return;
-    }
+    WorkJson::Instance().onMethod(data, pClient);
 }
 
 void Server::sendAll(const QString &data)
 {
-    foreach (QWebSocket* client, _clientsList)
+    foreach (QWebSocket* client, WorkJson::Instance().getClientsList())
     {   
         client->sendTextMessage(data);
     }
@@ -154,16 +80,20 @@ void Server::socketDisconnected()
 
     QString nickname;
 
-    if (!_nameClients.contains(pClient))
+    QMap <QWebSocket *, QString> nameClients = WorkJson::Instance().getNameClients();
+
+    if (!nameClients.contains(pClient))
     {
         qWarning() << "Warning! Client is not exist in clients list:" << pClient;
         return;
     }
 
-    nickname = _nameClients[pClient];
+    nickname = nameClients[pClient];
 
     qDebug() << "Remove client...:" << pClient;
-    _nameClients.remove(pClient);
+    nameClients.remove(pClient);
+
+    WorkJson::Instance().setNameClients(nameClients);
 
     qDebug() << "Remove player...:" << nickname;
 
@@ -178,8 +108,10 @@ void Server::socketDisconnected()
     GameObjects::Instance().toPlayers(nickname, players[nickname], REMOVE);
 
     if (pClient) {
-        _clientsList.removeAll(pClient);
+        QList <QWebSocket *> clientsList = WorkJson::Instance().getClientsList();
+        clientsList.removeAll(pClient);
         pClient->deleteLater();
+        WorkJson::Instance().setClientsList(clientsList);
     }
 
     sendAll(WorkJson::Instance().toJsonDisconnection(nickname));
