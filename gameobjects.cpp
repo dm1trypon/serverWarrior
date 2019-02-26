@@ -77,6 +77,7 @@ void GameObjects::toPlayers(const QString &nickname, Player *player, const bool 
     }
 
     qDebug() << "Remove player" << nickname << "from player's list...";
+    _players[nickname]->deleteLater();
     _players.remove(nickname);
     qDebug() << _players;
 }
@@ -89,6 +90,7 @@ void GameObjects::toBullets(const int id, Bullet *bullet)
 
 void GameObjects::delBullets(const QString &nickname, const int id)
 {
+    _bullets[id]->deleteLater();
     _bullets.remove(id);
     WorkJson::Instance().toSend(WorkJson::Instance().toJsonRemove(nickname, id));
 }
@@ -106,9 +108,34 @@ QMap <QString, qreal> GameObjects::generateXY()
     return posXY;
 }
 
+void GameObjects::setLifePlayers(const int lifePlayers)
+{
+    _lifePlayers = lifePlayers;
+}
+
+int GameObjects::getLifePlayers()
+{
+    return _lifePlayers;
+}
+
+void GameObjects::setSpeedPlayers(const qreal speedPlayers)
+{
+    _speedPlayers = speedPlayers;
+}
+
+void GameObjects::setSpeedBullets(const qreal speedBullets)
+{
+    _speedBullets = speedBullets;
+}
+
 qreal GameObjects::getSpeedPlayers()
 {
-    return speed;
+    return _speedPlayers;
+}
+
+qreal GameObjects::getSpeedBullets()
+{
+    return _speedBullets;
 }
 
 QMap <int, Bullet *> GameObjects::getBullets()

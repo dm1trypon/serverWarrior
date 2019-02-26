@@ -1,4 +1,5 @@
 #include "bullet.h"
+#include "gameobjects.h"
 
 Bullet::Bullet(const QMap <QString, qreal> position,
                const QMap <QString, qreal> size,
@@ -6,6 +7,7 @@ Bullet::Bullet(const QMap <QString, qreal> position,
                const QString &nickname,
                const int id, QObject *parent) :
     QObject (parent),
+    _speed(GameObjects::Instance().getSpeedBullets()),
     _position(position),
     _click(click),
     _size(size),
@@ -23,6 +25,11 @@ void Bullet::setPosition(const QMap <QString, qreal> position)
 void Bullet::setSpeedMove(const QMap <QString, qreal> speedMove)
 {
     _speedMove = speedMove;
+}
+
+void Bullet::setSpeed(const qreal speed)
+{
+    _speed = speed;
 }
 
 QMap <QString, qreal> Bullet::getSpeedMove()

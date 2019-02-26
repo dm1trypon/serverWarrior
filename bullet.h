@@ -20,8 +20,9 @@ public:
     void setSpeedMove(const QMap <QString, qreal> speedMove);
 
     QMap<QString, qreal> getSize();
+    void setSpeed(const qreal speed);
 private:
-    const qreal _speed = 7;
+    qreal _speed;
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _click;

@@ -1,4 +1,4 @@
-#ifndef GAMEOBJECTS_H
+﻿#ifndef GAMEOBJECTS_H
 #define GAMEOBJECTS_H
 
 #include "player.h"
@@ -29,16 +29,25 @@ public:
     void createScene();
     QMap <QString, Scene *> getScene();
     qreal getSpeedPlayers();
+    qreal getSpeedBullets();
+
     void setSizeScene(const QMap <QString, int> sizeScene);
 
     void toBullets(const int id, Bullet *bullet);
     QMap <int, Bullet *> getBullets();
     void delBullets(const QString &nickname, const int id);
+    void setSpeedPlayers(const qreal speedPlayers);
+    void setSpeedBullets(const qreal speedBullets);
+
+    void setLifePlayers(const int lifePlayers);
+    int getLifePlayers();
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
 
-    const qreal speed = 4;
+    qreal _speedPlayers;
+    qreal _speedBullets;
+    int _lifePlayers;
 
     QMap <QString, Player *> _players;
     QMap <int, Bullet *> _bullets;

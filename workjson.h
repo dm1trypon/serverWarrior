@@ -45,6 +45,7 @@ public:
     void setClientsList(QList<QWebSocket *> clientsList);
     void setNameClients(QMap<QWebSocket *, QString> nameClients);
     QMap <QWebSocket *, QString> getNameClients();
+    QString toJsonDie(const QString &nickname);
 signals:
     void signalToSend(QString);
 };

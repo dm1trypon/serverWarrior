@@ -11,6 +11,7 @@ Player::Player(const QMap <QString, qreal> position,
     _width(size["width"]), _height(size["height"]),
     _posX(position["x"]), _posY(position["y"]),
     _maxSpeed(GameObjects::Instance().getSpeedPlayers()),
+    _life(GameObjects::Instance().getLifePlayers()),
     _id(id),
     _nickname(nickname)
 {
@@ -141,7 +142,14 @@ int Player::getLife()
 
 void Player::setLife(const int life)
 {
-    _life = life;
+    if (_life > 0)
+    {
+        _life = life;
+        return;
+    }
+
+    WorkJson::Instance().toSend(WorkJson::Instance().toJsonDie(_nickname));
+    GameObjects::Instance().toPlayers(_nickname, this, REMOVE);
 }
 
 void Player::setPosition(const QMap <QString, qreal> position)
@@ -162,4 +170,14 @@ void Player::setMove(const bool isHold)
 void Player::setShotSpeed(const int shotSpeed)
 {
     _shotSpeed = shotSpeed;
+}
+
+void Player::setMaxSpeed(const qreal maxSpeed)
+{
+    _maxSpeed = maxSpeed;
+}
+
+qreal Player::getMaxSpeed()
+{
+    return _maxSpeed;
 }

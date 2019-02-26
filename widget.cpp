@@ -37,6 +37,21 @@ void Widget::createElements()
     _inputHeight->setMaxLength(4);
     _inputHeight->setValidator(new QIntValidator(1000, 9999, this));
 
+    _labelSpeedPlayers = new QLabel("Speed players:");
+
+    _inputSpeedPlayers = new QLineEdit();
+    _inputSpeedPlayers->setText("4");
+
+    _labelSpeedBullets = new QLabel("Speed bullets:");
+
+    _inputSpeedBullets = new QLineEdit();
+    _inputSpeedBullets->setText("7");
+
+    _labelLifePlayers = new QLabel("Max life:");
+
+    _inputLifePlayers = new QLineEdit();
+    _inputLifePlayers->setText("5");
+
     _buttonStart = new QPushButton("Start");
     connect(_buttonStart, &QPushButton::clicked, this, &Widget::startServer);
 
@@ -57,15 +72,21 @@ void Widget::createElements()
 
     _mainLayout->addWidget(_labelInfo, 1, 1, 1, 3);
     _mainLayout->addWidget(_labelPort, 2, 1, 1, 1);
-    _mainLayout->addWidget(_inputPort, 2, 2, 1, 1);
-    _mainLayout->addWidget(_buttonStart, 2, 3, 1, 1);
-    _mainLayout->addWidget(_buttonStop, 2, 3, 1, 1);
+    _mainLayout->addWidget(_inputPort, 2, 2, 1, 2);
     _mainLayout->addWidget(_labelSize, 3, 1, 1, 1);
     _mainLayout->addWidget(_inputWidth, 3, 2, 1, 1);
     _mainLayout->addWidget(_inputHeight, 3, 3, 1, 1);
-    _mainLayout->addWidget(_labelList, 4, 1, 1, 2);
-    _mainLayout->addWidget(_buttonMore, 4, 3, 1, 1);
-    _mainLayout->addWidget(_listClients, 5, 1, 3, 3);
+    _mainLayout->addWidget(_labelSpeedPlayers, 4, 1, 1, 1);
+    _mainLayout->addWidget(_inputSpeedPlayers, 4, 2, 1, 2);
+    _mainLayout->addWidget(_labelSpeedBullets, 5, 1, 1, 1);
+    _mainLayout->addWidget(_inputSpeedBullets, 5, 2, 1, 2);
+    _mainLayout->addWidget(_labelLifePlayers, 6, 1, 1, 1);
+    _mainLayout->addWidget(_inputLifePlayers, 6, 2, 1, 2);
+    _mainLayout->addWidget(_buttonStart, 7, 1, 1, 3);
+    _mainLayout->addWidget(_buttonStop, 7, 1, 1, 3);
+    _mainLayout->addWidget(_labelList, 8, 1, 1, 2);
+    _mainLayout->addWidget(_buttonMore, 8, 3, 1, 1);
+    _mainLayout->addWidget(_listClients, 9, 1, 3, 3);
 
     setLayout(_mainLayout);
 }
@@ -87,8 +108,11 @@ void Widget::startServer()
 {
     _buttonStart->setDisabled(true);
     _port = static_cast<quint16>(_inputPort->text().toInt());
-    qDebug() << "Starting server on port:" << _port;
     toSizeScene();
+    GameObjects::Instance().setSpeedBullets(_inputSpeedBullets->text().toInt());
+    GameObjects::Instance().setSpeedPlayers(_inputSpeedPlayers->text().toInt());
+    GameObjects::Instance().setLifePlayers(_inputLifePlayers->text().toInt());
+    qDebug() << "Starting server on port:" << _port;
     _server = new Server(_port);
 
     if (_server->getError())
@@ -175,6 +199,12 @@ void Widget::elements(const bool isStarted)
         _labelSize->hide();
         _inputWidth->hide();
         _inputHeight->hide();
+        _inputSpeedBullets->hide();
+        _inputSpeedPlayers->hide();
+        _inputLifePlayers->hide();
+        _labelSpeedBullets->hide();
+        _labelLifePlayers->hide();
+        _labelSpeedPlayers->hide();
         _buttonStart->hide();
         _labelInfo->setText("<H2>Server started on port: " + QString::number(_port) + "</H2>");
         _buttonStop->show();
@@ -185,7 +215,13 @@ void Widget::elements(const bool isStarted)
     _inputPort->show();
     _labelPort->show();
     _buttonStart->show();
+    _inputSpeedBullets->show();
+    _inputSpeedPlayers->show();
+    _labelSpeedBullets->show();
+    _labelSpeedPlayers->show();
+    _labelLifePlayers->show();
     _labelSize->show();
+    _inputLifePlayers->show();
     _inputWidth->show();
     _inputHeight->show();
     _buttonStop->hide();

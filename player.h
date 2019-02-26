@@ -31,6 +31,8 @@ public:
 
     int getLife();
     void setLife(const int life);
+    void setMaxSpeed(const qreal maxSpeed);
+    qreal getMaxSpeed();
 private slots:
     void setSpeed();
 
@@ -38,6 +40,8 @@ public slots:
     void setShot();
 
 private:
+    const bool REMOVE = false;
+
     bool _isShot = true;
     qreal _width;
     qreal _height;
@@ -49,7 +53,6 @@ private:
     qreal _maxSpeedY = 0;
     qreal _maxSpeed;
     int _shotSpeed = 10;
-    int _timeShot = 1;
     int _life = 5;
     int _id;
     bool _move = false;
