@@ -21,19 +21,18 @@ void GameObjects::setSizeScene(const QMap <QString, int> sizeScene)
     _sizeScene = sizeScene;
 }
 
-void GameObjects::setBulletSpeed(Bullet *bullet)
+void GameObjects::setSpeedMove(Bullet *bullet)
 {
-    qDebug() << bullet->getClick();
+    const QString nickname = bullet->getNickname();
+    const QMap <QString, qreal> click = bullet->getClick();
+    const QMap <QString, qreal> position = _players[nickname]->getPosition();
+    const qreal speedBullet = bullet->getSpeed();
 
-    const qreal speedX = ((bullet->getClick()["x"] - _players[bullet->getNickname()]->getPosition()["x"])
-            * bullet->getSpeed()
-            / sqrt(qPow(bullet->getClick()["x"] - _players[bullet->getNickname()]->getPosition()["x"], 2)
-            + qPow(bullet->getClick()["y"] - _players[bullet->getNickname()]->getPosition()["y"], 2)));
+    const qreal speedX = ((click["x"] - position["x"]) * speedBullet
+            / sqrt(qPow(click["x"] - position["x"], 2) + qPow(click["y"] - position["y"], 2)));
 
-    const qreal speedY = ((bullet->getClick()["y"] - _players[bullet->getNickname()]->getPosition()["y"])
-            * bullet->getSpeed()
-            / sqrt(qPow(bullet->getClick()["x"] - _players[bullet->getNickname()]->getPosition()["x"], 2)
-            + qPow(bullet->getClick()["y"] - _players[bullet->getNickname()]->getPosition()["y"], 2)));
+    const qreal speedY = ((click["y"] - position["y"]) * speedBullet
+            / sqrt(qPow(click["x"] - position["x"], 2) + qPow(click["y"] - position["y"], 2)));
 
     QMap <QString, qreal> speed;
     speed.insert("speed_x", speedX);
@@ -85,7 +84,7 @@ void GameObjects::toPlayers(const QString &nickname, Player *player, const bool 
 void GameObjects::toBullets(const int id, Bullet *bullet)
 {
     _bullets.insert(id, bullet);
-    setBulletSpeed(bullet);
+    setSpeedMove(bullet);
 }
 
 void GameObjects::delBullets(const QString &nickname, const int id)
