@@ -142,7 +142,7 @@ int Player::getLife()
 
 void Player::setLife(const int life)
 {
-    if (_life > 0)
+    if (life > 0)
     {
         _life = life;
         return;

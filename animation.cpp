@@ -103,5 +103,4 @@ void Animation::onPlayers(const QMap <QString, Player *> players, const QMap <QS
             player->setPosition(newPosition);
         }
     }
-
 }

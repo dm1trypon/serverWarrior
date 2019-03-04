@@ -55,7 +55,7 @@ private:
     QMap <QString, int> _sizeScene;
 
     bool isKeyboardSticking(const QString &nickname, const QMap <QString, qreal> speedPlayer, const bool isHold);
-    void setBulletSpeed(Bullet *bullet);
+    void setSpeedMove(Bullet *bullet);
 };
 
 #endif // GAMEOBJECTS_H
