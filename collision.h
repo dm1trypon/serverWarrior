@@ -11,7 +11,7 @@ public:
     Collision();
     QString checkCollisionScene(Player *player, Scene *scene);
     bool checkCollisionPlayers(Player *player, const QMap <QString, Player *> players);
-    bool checkCollisionBullets(Bullet *bullet, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene);
+    bool checkCollisionBullets(Bullet *bullet, const QMap<int, Bullet *> bullets, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene);
 };
 
 #endif // COLLISION_H

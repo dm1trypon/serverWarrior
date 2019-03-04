@@ -46,7 +46,7 @@ void Animation::onBullets(const QMap <int, Bullet *> bullets, const QMap <QStrin
 
         bullet->setPosition(newPosition);
 
-        if (_collision.checkCollisionBullets(bullet, players, scene))
+        if (_collision.checkCollisionBullets(bullet, bullets, players, scene))
         {
             GameObjects::Instance().delBullets(bullet->getNickname(), bullet->getId());
         }
