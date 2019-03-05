@@ -57,7 +57,7 @@ void Animation::onPlayers(const QMap <QString, Player *> players, const QMap <QS
 {
     foreach (Player *player, players)
     {
-        const QString side = _collision.checkCollisionScene(player, scene["scene"]);
+        const QString side = _collision.checkCollisionScene(player, scene);
 
         qreal vertical = 0;
         qreal horizontal = 0;
