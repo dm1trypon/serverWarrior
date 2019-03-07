@@ -140,16 +140,27 @@ int Player::getLife()
     return _life;
 }
 
-void Player::setLife(const int life)
+void Player::setLife()
 {
-    if (life > 0)
+    _life --;
+
+    if (_life > 0)
     {
-        _life = life;
         return;
     }
 
     WorkJson::Instance().toSend(WorkJson::Instance().toJsonDie(_nickname));
     GameObjects::Instance().toPlayers(_nickname, this, REMOVE);
+}
+
+int Player::getScore()
+{
+    return _score;
+}
+
+void Player::setScore()
+{
+    _score ++;
 }
 
 void Player::setPosition(const QMap <QString, qreal> position)

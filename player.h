@@ -30,7 +30,9 @@ public:
     QTimer *getShotTimer();
 
     int getLife();
-    void setLife(const int life);
+    void setLife();
+    int getScore();
+    void setScore();
     void setMaxSpeed(const qreal maxSpeed);
     qreal getMaxSpeed();
 private slots:
@@ -53,7 +55,8 @@ private:
     qreal _maxSpeedY = 0;
     qreal _maxSpeed;
     int _shotSpeed = 10;
-    int _life = 5;
+    int _life;
+    int _score = 0;
     int _id;
     bool _move = false;
     QTimer _speedTimer;
