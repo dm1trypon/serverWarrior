@@ -15,9 +15,18 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
 {
     const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
 
+    qDebug() << "Data:" << data;
+
     if (dataJsonObj.value("method") == "verify")
     {
         const QString nickname = dataJsonObj.value("nickname").toString();
+
+        if (_clientsList.contains(pClient))
+        {
+            return;
+        }
+
+        WorkJson::Instance().setClientsList(_clientsList << pClient);
 
         if (GameObjects::Instance().isExistPlayer(nickname))
         {

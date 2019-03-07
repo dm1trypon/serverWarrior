@@ -49,10 +49,6 @@ void Server::onNewConnection()
     connect(pSocket, &QWebSocket::disconnected, this, &Server::socketDisconnected);
 
     pSocket->sendTextMessage(WorkJson::Instance().toJson("verify"));
-
-    QList <QWebSocket* > clientsList = WorkJson::Instance().getClientsList();
-    clientsList << pSocket;
-    WorkJson::Instance().setClientsList(clientsList);
 }
 
 void Server::processTextMessage(const QString &data)

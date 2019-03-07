@@ -136,7 +136,7 @@ bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <int, Bullet *>
         collision = true;
     }
 
-    if (positionBullet["x"] + sizeBullet["width"] > positionScene["x"] + sizeScene["width"])
+    if (positionBullet["x"] + sizeBullet["width"] / 2 > positionScene["x"] + sizeScene["width"])
     {
         collision = true;
     }
@@ -146,7 +146,7 @@ bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <int, Bullet *>
         collision = true;
     }
 
-    if (positionBullet["y"] + sizeBullet["height"] > positionScene["y"] + sizeScene["height"])
+    if (positionBullet["y"] + sizeBullet["height"] / 2 > positionScene["y"] + sizeScene["height"])
     {
         collision = true;
     }
