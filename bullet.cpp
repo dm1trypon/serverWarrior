@@ -1,4 +1,4 @@
-#include "bullet.h"
+﻿#include "bullet.h"
 #include "gameobjects.h"
 
 Bullet::Bullet(const QMap <QString, qreal> position,
@@ -45,6 +45,16 @@ QString Bullet::getNickname()
 qreal Bullet::getSpeed()
 {
     return _speed;
+}
+
+int Bullet::getDamage()
+{
+    return _damage;
+}
+
+void Bullet::setDamage(const int damage)
+{
+    _damage = damage;
 }
 
 int Bullet::getId()

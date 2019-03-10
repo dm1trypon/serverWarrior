@@ -30,7 +30,7 @@ public:
     QTimer *getShotTimer();
 
     int getLife();
-    void setLife();
+    void setLife(const int damage);
     int getScore();
     void setScore();
     void setMaxSpeed(const qreal maxSpeed);

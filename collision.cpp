@@ -96,7 +96,7 @@ bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <int, Bullet *>
             if (distance < sizeBullet["width"] / 2 + sizeEnemyPlayer["width"] / 2)
             {
                 collision = true;
-                enemyPlayer->setLife();
+                enemyPlayer->setLife(bullet->getDamage());
 
                 if (!players.contains(enemyPlayer->getNickname()))
                 {

@@ -16,6 +16,8 @@ public:
     QMap <QString, qreal> getPosition();
     QMap <QString, qreal> getClick();
     qreal getSpeed();
+    int getDamage();
+    void setDamage(const int damage);
     QMap <QString, qreal> getSpeedMove();
     void setSpeedMove(const QMap <QString, qreal> speedMove);
 
@@ -23,6 +25,7 @@ public:
     void setSpeed(const qreal speed);
 private:
     qreal _speed;
+    int _damage = 8;
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _click;

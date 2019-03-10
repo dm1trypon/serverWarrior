@@ -140,9 +140,9 @@ int Player::getLife()
     return _life;
 }
 
-void Player::setLife()
+void Player::setLife(const int damage)
 {
-    _life --;
+    _life = _life - damage;
 
     if (_life > 0)
     {
