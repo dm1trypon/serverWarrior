@@ -27,18 +27,25 @@ void Animation::process()
 {   
     QMap <QString, Scene *> scene = GameObjects::Instance().getScene();
 
-    onPlayers(GameObjects::Instance().getPlayers(), scene);
-    onBullets(GameObjects::Instance().getBullets(), GameObjects::Instance().getPlayers(), scene);
+    onPlayers(GameObjects::Instance().getPlayers(),scene);
 
-    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(), scene));
+    onBullets(GameObjects::Instance().getBullets(),
+              GameObjects::Instance().getPlayers(),
+              scene);
+
+    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(),
+                                                                   GameObjects::Instance().getBullets(),
+                                                                   scene));
 }
 
-void Animation::onBullets(const QMap <int, Bullet *> bullets, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene)
+void Animation::onBullets(const QMap <int, Bullet *> bullets,
+                          const QMap <QString, Player *> players,
+                          const QMap <QString, Scene *> scene)
 {
     foreach (Bullet *bullet, bullets)
     {
-        QMap <QString, qreal> position = bullet->getPosition();
-        QMap <QString, qreal> speedMove = bullet->getSpeedMove();
+        const QMap <QString, qreal> position = bullet->getPosition();
+        const QMap <QString, qreal> speedMove = bullet->getSpeedMove();
 
         QMap <QString, qreal> newPosition;
         newPosition.insert("x", position["x"] + speedMove["speed_x"]);
@@ -87,12 +94,13 @@ void Animation::onPlayers(const QMap <QString, Player *> players, const QMap <QS
             vertical = -10;
         }
 
-        QMap <QString, qreal> position = player->getPosition();
-        QMap <QString, qreal> speed = player->getSpeed();
+        const QMap <QString, qreal> position = player->getPosition();
+        const QMap <QString, qreal> speed = player->getSpeed();
 
         QMap <QString, qreal> newPosition;
         newPosition.insert("x", position["x"] + speed["speed_x"] + horizontal);
         newPosition.insert("y", position["y"] + speed["speed_y"] + vertical);
+
         player->setPosition(newPosition);
 
         if (_collision.checkCollisionPlayers(player, players))

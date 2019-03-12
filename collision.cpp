@@ -98,7 +98,7 @@ bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <int, Bullet *>
                 collision = true;
                 enemyPlayer->setLife(bullet->getDamage());
 
-                if (!players.contains(enemyPlayer->getNickname()))
+                if (enemyPlayer->getLife() <= 0)
                 {
                     players[bullet->getNickname()]->setScore();
                 }

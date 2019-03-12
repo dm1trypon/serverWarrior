@@ -185,6 +185,7 @@ QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QM
         playerJsonObj.insert("height", size["height"]);
 
         playerJsonObj.insert("life", player->getLife());
+        playerJsonObj.insert("score", player->getScore());
 
         playersJsonArr.append(playerJsonObj);
     }
