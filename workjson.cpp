@@ -15,8 +15,6 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
 {
     const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
 
-    qDebug() << "Data:" << data;
-
     if (dataJsonObj.value("method") == "verify")
     {
         const QString nickname = dataJsonObj.value("nickname").toString();
@@ -35,6 +33,7 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
             _clientsList.removeAll(pClient);
             pClient->close();
             pClient->deleteLater();
+
             return;
         }
 
@@ -47,10 +46,13 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         sizePlayer.insert("width", 100);
         sizePlayer.insert("height", 100);
 
-        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
+        GameObjects::Instance().toPlayers(nickname,
+                                          new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
 
         toSend(toJsonConnection(nickname, idPlayer, positionPlayer));
-        toSend(toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(), GameObjects::Instance().getScene()));
+        toSend(toJsonObjects(GameObjects::Instance().getPlayers(),
+                             GameObjects::Instance().getBullets(),
+                             GameObjects::Instance().getScene()));
         return;
     }
 
@@ -59,9 +61,9 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         const QString nickname = dataJsonObj.value("nickname").toString();
         const QString key = dataJsonObj.value("key").toString();
         const bool isHold = dataJsonObj.value("hold").toBool();
-        qDebug() << "Method:" << dataJsonObj.value("method");
 
         _control.controlPlayers(nickname, key, isHold);
+
         return;
     }
 
@@ -69,8 +71,8 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
     {
         const QString nickname = dataJsonObj.value("nickname").toString();
 
-        qreal clickX = dataJsonObj.value("x").toDouble();
-        qreal clickY = dataJsonObj.value("y").toDouble();
+        const qreal clickX = dataJsonObj.value("x").toDouble();
+        const qreal clickY = dataJsonObj.value("y").toDouble();
 
         QMap <QString, qreal> click;
         click.insert("x", clickX);
@@ -83,6 +85,11 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         const int idBullet = GameObjects::Instance().generateId();
 
         Player *player = GameObjects::Instance().getPlayers()[nickname];
+
+        if (!player)
+        {
+            return;
+        }
 
         const QMap <QString, qreal> sizePlayer = player->getSize();
         const QMap <QString, qreal> positionPlayer = player->getPosition();
@@ -98,7 +105,9 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
 
         player->setShot();
         player->getShotTimer()->singleShot(player->getShotSpeed(), player, &Player::setShot);
-        GameObjects::Instance().toBullets(idBullet, new Bullet(positionPlayerCenter, sizeBullet, click, nickname, idBullet));
+
+        GameObjects::Instance().toBullets(idBullet,
+                                          new Bullet(positionPlayerCenter, sizeBullet, click, nickname, idBullet));
 
         return;
     }
@@ -113,9 +122,12 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         sizePlayer.insert("width", 100);
         sizePlayer.insert("height", 100);
 
-        GameObjects::Instance().toPlayers(nickname, new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
+        GameObjects::Instance().toPlayers(nickname,
+                                          new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
 
-        toSend(toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(), GameObjects::Instance().getScene()));
+        toSend(toJsonObjects(GameObjects::Instance().getPlayers(),
+                             GameObjects::Instance().getBullets(),
+                             GameObjects::Instance().getScene()));
         return;
     }
 }
@@ -159,10 +171,13 @@ QString WorkJson::toJson(const QString &method)
     dataJsonObj.insert("method", method);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
-QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QMap <int, Bullet *> bullets,  const QMap <QString, Scene *> scene)
+QString WorkJson::toJsonObjects(const QMap <QString, Player *> players,
+                                const QMap <int, Bullet *> bullets,
+                                const QMap <QString, Scene *> scene)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "objects");
@@ -225,6 +240,7 @@ QString WorkJson::toJsonObjects(const QMap <QString, Player *> players, const QM
 
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
@@ -235,10 +251,13 @@ QString WorkJson::toJsonError(const QString &error)
     dataJsonObj.insert("result", error);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
-QString WorkJson::toJsonConnection(const QString &nickname, const int idPlayer, const QMap <QString, qreal> positionPlayer)
+QString WorkJson::toJsonConnection(const QString &nickname,
+                                   const int idPlayer,
+                                   const QMap <QString, qreal> positionPlayer)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "connection");
@@ -248,6 +267,7 @@ QString WorkJson::toJsonConnection(const QString &nickname, const int idPlayer, 
     dataJsonObj.insert("pos_y", positionPlayer["y"]);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
@@ -258,6 +278,7 @@ QString WorkJson::toJsonDisconnection(const QString &nickname)
     dataJsonObj.insert("nickname", nickname);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
@@ -269,6 +290,7 @@ QString WorkJson::toJsonRemove(const QString &nickname, const int id)
     dataJsonObj.insert("id_bullet", id);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
@@ -279,6 +301,7 @@ QString WorkJson::toJsonDie(const QString &nickname)
     dataJsonObj.insert("nickname", nickname);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
