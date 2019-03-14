@@ -25,7 +25,12 @@ void GameObjects::setSpeedMove(Bullet *bullet)
 {
     const QString nickname = bullet->getNickname();
     const QMap <QString, qreal> click = bullet->getClick();
-    const QMap <QString, qreal> position = _players[nickname]->getPosition();
+    const QMap <QString, qreal> size = _players[nickname]->getSize();
+
+    QMap <QString, qreal> position = _players[nickname]->getPosition();
+    position["x"] = position["x"] + size["width"] / 2;
+    position["y"] = position["y"] + size["height"] / 2;
+
     const qreal speedBullet = bullet->getSpeed();
 
     const qreal speedX = ((click["x"] - position["x"]) * speedBullet

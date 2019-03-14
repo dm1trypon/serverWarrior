@@ -54,7 +54,7 @@ private:
     qreal _maxSpeedX = 0;
     qreal _maxSpeedY = 0;
     qreal _maxSpeed;
-    int _shotSpeed = 10;
+    int _shotSpeed = 100;
     int _life;
     int _score = 0;
     int _id;

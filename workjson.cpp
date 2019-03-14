@@ -53,6 +53,7 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         toSend(toJsonObjects(GameObjects::Instance().getPlayers(),
                              GameObjects::Instance().getBullets(),
                              GameObjects::Instance().getScene()));
+
         return;
     }
 
@@ -95,8 +96,8 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         const QMap <QString, qreal> positionPlayer = player->getPosition();
 
         QMap <QString, qreal> positionPlayerCenter;
-        positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2);
-        positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2);
+        positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2 - sizeBullet["width"] / 2);
+        positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2 - sizeBullet["height"] / 2);
 
         if (!player->getShot())
         {
@@ -216,6 +217,10 @@ QString WorkJson::toJsonObjects(const QMap <QString, Player *> players,
         QMap <QString, qreal> position = bullet->getPosition();
         bulletJsonObj.insert("pos_x", position["x"]);
         bulletJsonObj.insert("pos_y", position["y"]);
+
+        QMap <QString, qreal> speed = bullet->getSpeedMove();
+        bulletJsonObj.insert("speed_x", speed["speed_x"]);
+        bulletJsonObj.insert("speed_y", speed["speed_y"]);
 
         QMap <QString, qreal> size = bullet->getSize();
         bulletJsonObj.insert("width", size["width"]);
