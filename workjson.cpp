@@ -85,7 +85,12 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
 
         const int idBullet = GameObjects::Instance().generateId();
 
-        Player *player = GameObjects::Instance().getPlayers()[nickname];
+        Player *player = nullptr;
+
+        if (GameObjects::Instance().getPlayers().contains(nickname))
+        {
+            player = GameObjects::Instance().getPlayers()[nickname];
+        }
 
         if (!player)
         {

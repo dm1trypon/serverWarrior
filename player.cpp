@@ -8,8 +8,8 @@ Player::Player(const QMap <QString, qreal> position,
                const QString &nickname,
                const int id, QObject *parent) :
     QObject(parent),
+    _position(position),
     _width(size["width"]), _height(size["height"]),
-    _posX(position["x"]), _posY(position["y"]),
     _maxSpeed(GameObjects::Instance().getSpeedPlayers()),
     _life(GameObjects::Instance().getLifePlayers()),
     _id(id),
@@ -49,10 +49,7 @@ bool Player::getShot()
 
 QMap <QString, qreal> Player::getPosition()
 {
-    QMap <QString, qreal> position;
-    position.insert("x", _posX);
-    position.insert("y", _posY);
-    return position;
+    return _position;
 }
 
 QMap <QString, qreal> Player::getSize()
@@ -140,7 +137,12 @@ int Player::getLife()
     return _life;
 }
 
-void Player::setLife(const int damage)
+void Player::resetLife()
+{
+    _life = GameObjects::Instance().getLifePlayers();
+}
+
+void Player::onDamage(const int damage)
 {
     _life = _life - damage;
 
@@ -149,8 +151,9 @@ void Player::setLife(const int damage)
         return;
     }
 
-    WorkJson::Instance().toSend(WorkJson::Instance().toJsonDie(_nickname));
-    GameObjects::Instance().toPlayers(_nickname, this, REMOVE);
+    _position = GameObjects::Instance().generateXY();
+//    WorkJson::Instance().toSend(WorkJson::Instance().toJsonDie(_nickname));
+//    GameObjects::Instance().toPlayers(_nickname, this, REMOVE);
 }
 
 int Player::getScore()
@@ -165,12 +168,8 @@ void Player::setScore()
 
 void Player::setPosition(const QMap <QString, qreal> position)
 {
-    QMap <QString, qreal> oldPosition;
-    oldPosition.insert("x", _posX);
-    oldPosition.insert("y", _posY);
-
-    _posX = position["x"];
-    _posY = position["y"];
+    _position["x"] = position["x"];
+    _position["y"] = position["y"];
 }
 
 void Player::setMove(const bool isHold)

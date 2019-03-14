@@ -82,7 +82,9 @@ bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <int, Bullet *>
 
     foreach (Player *enemyPlayer, players)
     {
-        if (bullet->getNickname() != enemyPlayer->getNickname())
+        const QString nicknameBullet = bullet->getNickname();
+
+        if (nicknameBullet != enemyPlayer->getNickname())
         {
             QMap <QString, qreal> positionEnemyPlayer = enemyPlayer->getPosition();
             const QMap <QString, qreal> sizeEnemyPlayer = enemyPlayer->getSize();
@@ -96,11 +98,18 @@ bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <int, Bullet *>
             if (distance < sizeBullet["width"] / 2 + sizeEnemyPlayer["width"] / 2)
             {
                 collision = true;
-                enemyPlayer->setLife(bullet->getDamage());
+                enemyPlayer->onDamage(bullet->getDamage());
 
                 if (enemyPlayer->getLife() <= 0)
                 {
-                    players[bullet->getNickname()]->setScore();
+                    enemyPlayer->resetLife();
+
+                    if (!players.contains(nicknameBullet))
+                    {
+                        break;
+                    }
+
+                    players[nicknameBullet]->setScore();
                 }
 
                 break;

@@ -30,11 +30,12 @@ public:
     QTimer *getShotTimer();
 
     int getLife();
-    void setLife(const int damage);
+    void onDamage(const int damage);
     int getScore();
     void setScore();
     void setMaxSpeed(const qreal maxSpeed);
     qreal getMaxSpeed();
+    void resetLife();
 private slots:
     void setSpeed();
 
@@ -45,10 +46,9 @@ private:
     const bool REMOVE = false;
 
     bool _isShot = true;
+    QMap <QString, qreal> _position;
     qreal _width;
     qreal _height;
-    qreal _posX;
-    qreal _posY;
     qreal _speedX = 0;
     qreal _speedY = 0;
     qreal _maxSpeedX = 0;
