@@ -53,8 +53,6 @@ void Server::onNewConnection()
 
 void Server::processTextMessage(const QString &data)
 {
-    qDebug() << "Incoming message:" << data;
-
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
     WorkJson::Instance().onMethod(data, pClient);

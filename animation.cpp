@@ -3,6 +3,7 @@
 #include "workjson.h"
 
 #include <QDebug>
+#include <QtMath>
 
 Animation::Animation(QObject *parent) :
     QObject(parent)
@@ -64,6 +65,8 @@ void Animation::onPlayers(const QMap <QString, Player *> players, const QMap <QS
 {
     foreach (Player *player, players)
     {
+        playerRotation(player);
+
         const QString side = _collision.checkCollisionScene(player, scene["scene"]);
 
         qreal vertical = 0;
@@ -111,4 +114,23 @@ void Animation::onPlayers(const QMap <QString, Player *> players, const QMap <QS
             player->setPosition(newPosition);
         }
     }
+}
+
+void Animation::playerRotation(Player *player)
+{
+    const QMap <QString, qreal> size = player->getSize();
+    const QMap <QString, qreal> position = player->getPosDisplay();
+
+    QPointF cursor = player->getCursor();
+
+    const qreal cx = position["width"] + size["width"] / 2;
+    const qreal cy = position["height"] + size["height"] / 2;
+    const qreal angle = qAtan2(cursor.y() - cy, cursor.x() - cx) * HALF_G / PI;
+
+    if (static_cast<int>(player->getRotate()) == static_cast<int>(angle))
+    {
+        return;
+    }
+
+    player->setRotate(angle);
 }

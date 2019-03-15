@@ -150,6 +150,7 @@ void Widget::toSizeScene()
     QMap <QString, int> sizeScene;
     sizeScene.insert("width", _inputWidth->text().toInt());
     sizeScene.insert("height", _inputHeight->text().toInt());
+
     GameObjects::Instance().setSizeScene(sizeScene);
 }
 

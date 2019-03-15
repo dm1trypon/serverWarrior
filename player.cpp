@@ -4,11 +4,13 @@
 #include <QDebug>
 
 Player::Player(const QMap <QString, qreal> position,
+               const QMap <QString, qreal> posDisplay,
                const QMap <QString, qreal> size,
                const QString &nickname,
                const int id, QObject *parent) :
     QObject(parent),
     _position(position),
+    _posDisplay(posDisplay),
     _width(size["width"]), _height(size["height"]),
     _maxSpeed(GameObjects::Instance().getSpeedPlayers()),
     _life(GameObjects::Instance().getLifePlayers()),
@@ -23,6 +25,16 @@ Player::Player(const QMap <QString, qreal> position,
 QString Player::getNickname()
 {
     return _nickname;
+}
+
+void Player::setPosDisplay(const QMap <QString, qreal> posDisplay)
+{
+    _posDisplay = posDisplay;
+}
+
+const QMap <QString, qreal> Player::getPosDisplay()
+{
+    return _posDisplay;
 }
 
 void Player::setShot()
@@ -58,6 +70,16 @@ QMap <QString, qreal> Player::getSize()
     size.insert("width", _width);
     size.insert("height", _height);
     return size;
+}
+
+void Player::setRotate(const qreal rotate)
+{
+    _rotate = rotate;
+}
+
+qreal Player::getRotate()
+{
+    return _rotate;
 }
 
 QMap <QString, qreal> Player::getSpeed()
@@ -154,6 +176,16 @@ void Player::onDamage(const int damage)
     _position = GameObjects::Instance().generateXY();
 //    WorkJson::Instance().toSend(WorkJson::Instance().toJsonDie(_nickname));
 //    GameObjects::Instance().toPlayers(_nickname, this, REMOVE);
+}
+
+void Player::setCursor(const QPointF cursor)
+{
+    _cursor = cursor;
+}
+
+QPointF Player::getCursor()
+{
+    return _cursor;
 }
 
 int Player::getScore()

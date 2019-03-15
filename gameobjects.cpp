@@ -83,7 +83,6 @@ void GameObjects::toPlayers(const QString &nickname, Player *player, const bool 
     qDebug() << "Remove player" << nickname << "from player's list...";
     _players[nickname]->deleteLater();
     _players.remove(nickname);
-    qDebug() << _players;
 }
 
 void GameObjects::toBullets(const int id, Bullet *bullet)

@@ -4,13 +4,14 @@
 #include <QObject>
 #include <QMap>
 #include <QTimer>
+#include <QPointF>
 
 class Player : public QObject
 {
     Q_OBJECT
 
 public:
-    Player(const QMap <QString, qreal> position, const QMap<QString, qreal> size, const QString &nickname, const int id, QObject *parent = nullptr);
+    Player(const QMap <QString, qreal> position, const QMap <QString, qreal> posDisplay, const QMap<QString, qreal> size, const QString &nickname, const int id, QObject *parent = nullptr);
 
     QString getNickname();
     bool getMove();
@@ -22,8 +23,8 @@ public:
     QMap <QString, qreal> getSpeed();
     QMap <QString, qreal> getSize();
 
-    void setPosition(const QMap<QString, qreal> position);
-    void setMaxSpeed(const QMap<QString, qreal> speed);
+    void setPosition(const QMap <QString, qreal> position);
+    void setMaxSpeed(const QMap <QString, qreal> speed);
     void setMove(const bool isHold);
     void setShotSpeed(const int shotSpeed);
 
@@ -36,6 +37,12 @@ public:
     void setMaxSpeed(const qreal maxSpeed);
     qreal getMaxSpeed();
     void resetLife();
+    void setCursor(const QPointF cursor);
+    QPointF getCursor();
+    void setRotate(const qreal rotate);
+    qreal getRotate();
+    const QMap <QString, qreal> getPosDisplay();
+    void setPosDisplay(const QMap <QString, qreal> posDisplay);
 private slots:
     void setSpeed();
 
@@ -46,7 +53,10 @@ private:
     const bool REMOVE = false;
 
     bool _isShot = true;
+    qreal _rotate = 0;
     QMap <QString, qreal> _position;
+    QMap <QString, qreal> _posDisplay;
+    QPointF _cursor;
     qreal _width;
     qreal _height;
     qreal _speedX = 0;
@@ -54,7 +64,7 @@ private:
     qreal _maxSpeedX = 0;
     qreal _maxSpeedY = 0;
     qreal _maxSpeed;
-    int _shotSpeed = 100;
+    int _shotSpeed = 10;
     int _life;
     int _score = 0;
     int _id;

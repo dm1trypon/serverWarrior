@@ -13,7 +13,6 @@ void Control::controlPlayers(const QString &nickname, const QString &key, const 
     const QMap <QString, Player*> players = GameObjects::Instance().getPlayers();
     const qreal speed = GameObjects::Instance().getSpeedPlayers();
 
-    qDebug() << nickname << key << isHold;
     QMap <QString, qreal> speedPlayer;
 
     if (key == "up")

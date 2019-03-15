@@ -19,6 +19,10 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
     {
         const QString nickname = dataJsonObj.value("nickname").toString();
 
+        QMap <QString, qreal> posDisplay;
+        posDisplay.insert("width", dataJsonObj.value("width").toDouble());
+        posDisplay.insert("height", dataJsonObj.value("height").toDouble());
+
         if (_clientsList.contains(pClient))
         {
             return;
@@ -47,7 +51,7 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         sizePlayer.insert("height", 100);
 
         GameObjects::Instance().toPlayers(nickname,
-                                          new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
+                                          new Player(positionPlayer, posDisplay, sizePlayer, nickname, idPlayer), APPEND);
 
         toSend(toJsonConnection(nickname, idPlayer, positionPlayer));
         toSend(toJsonObjects(GameObjects::Instance().getPlayers(),
@@ -64,6 +68,22 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         const bool isHold = dataJsonObj.value("hold").toBool();
 
         _control.controlPlayers(nickname, key, isHold);
+
+        return;
+    }
+
+    if (dataJsonObj.value("method") == "cursor")
+    {
+        const QString nickname = dataJsonObj.value("nickname").toString();
+        const QMap <QString, Player *> players = GameObjects::Instance().getPlayers();
+
+        if (!players.contains(nickname))
+        {
+            return;
+        }
+
+        players[nickname]->setCursor(QPointF(dataJsonObj.value("pos_x").toDouble(),
+                                             dataJsonObj.value("pos_y").toDouble()));
 
         return;
     }
@@ -128,8 +148,8 @@ void WorkJson::onMethod(const QString &data, QWebSocket *pClient)
         sizePlayer.insert("width", 100);
         sizePlayer.insert("height", 100);
 
-        GameObjects::Instance().toPlayers(nickname,
-                                          new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
+//        GameObjects::Instance().toPlayers(nickname,
+//                                          new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
 
         toSend(toJsonObjects(GameObjects::Instance().getPlayers(),
                              GameObjects::Instance().getBullets(),
@@ -162,11 +182,11 @@ QJsonValue WorkJson::parseJson(const QString &field, const QJsonObject dataJsonO
 {
     if (dataJsonObj.contains(field))
     {
-        qDebug().noquote() << "Json object is not contain field:" << field;
+        qWarning().noquote() << "Json object is not contain field:" << field;
         return {};
     }
 
-    qDebug().noquote() << "Json object is contain field:" << field;
+    qWarning().noquote() << "Json object is contain field:" << field;
 
     return dataJsonObj.value(field);
 }
@@ -204,6 +224,8 @@ QString WorkJson::toJsonObjects(const QMap <QString, Player *> players,
         QMap <QString, qreal> size = player->getSize();
         playerJsonObj.insert("width", size["width"]);
         playerJsonObj.insert("height", size["height"]);
+
+        playerJsonObj.insert("rotation", player->getRotate());
 
         playerJsonObj.insert("life", player->getLife());
         playerJsonObj.insert("score", player->getScore());
