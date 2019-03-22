@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QTimer>
 
 class Bullet : public QObject
 {
@@ -16,6 +17,8 @@ public:
     QMap <QString, qreal> getPosition();
     QMap <QString, qreal> getClick();
     qreal getSpeed();
+    int getTimeLife();
+    void setTimeLife(const int timeLife);
     int getDamage();
     void setDamage(const int damage);
     QMap <QString, qreal> getSpeedMove();
@@ -23,9 +26,15 @@ public:
 
     QMap<QString, qreal> getSize();
     void setSpeed(const qreal speed);
+    bool isAlive();
+private slots:
+    void die();
 private:
+    QTimer _tAlive;
+    bool _alive = true;
     qreal _speed;
     int _damage = 8;
+    int _timeLife = 1000;
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _click;

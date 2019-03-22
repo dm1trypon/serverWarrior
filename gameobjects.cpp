@@ -4,30 +4,30 @@
 #include <QDebug>
 #include <QtMath>
 
-GameObjects::GameObjects(QObject *parent) :
-    QObject(parent)
+GameObjects::GameObjects(QObject* parent)
+    : QObject(parent)
 {
     srand(static_cast<uint>(time(nullptr)));
 }
 
-GameObjects &GameObjects::Instance()
+GameObjects& GameObjects::Instance()
 {
     static GameObjects theSingleInstance;
     return theSingleInstance;
 }
 
-void GameObjects::setSizeScene(const QMap <QString, int> sizeScene)
+void GameObjects::setSizeScene(const QMap<QString, int> sizeScene)
 {
     _sizeScene = sizeScene;
 }
 
-void GameObjects::setSpeedMove(Bullet *bullet)
+void GameObjects::setSpeedMove(Bullet* bullet)
 {
     const QString nickname = bullet->getNickname();
-    const QMap <QString, qreal> click = bullet->getClick();
-    const QMap <QString, qreal> size = _players[nickname]->getSize();
+    const QMap<QString, qreal> click = bullet->getClick();
+    const QMap<QString, qreal> size = _players[nickname]->getSize();
 
-    QMap <QString, qreal> position = _players[nickname]->getPosition();
+    QMap<QString, qreal> position = _players[nickname]->getPosition();
     position["x"] = position["x"] + size["width"] / 2;
     position["y"] = position["y"] + size["height"] / 2;
 
@@ -39,7 +39,7 @@ void GameObjects::setSpeedMove(Bullet *bullet)
     const qreal speedY = ((click["y"] - position["y"]) * speedBullet
             / sqrt(qPow(click["x"] - position["x"], 2) + qPow(click["y"] - position["y"], 2)));
 
-    QMap <QString, qreal> speed;
+    QMap<QString, qreal> speed;
     speed.insert("speed_x", speedX);
     speed.insert("speed_y", speedY);
 
@@ -48,21 +48,20 @@ void GameObjects::setSpeedMove(Bullet *bullet)
 
 void GameObjects::createScene()
 {
-    QMap <QString, qreal> position;
+    QMap<QString, qreal> position;
     position.insert("x", 0);
     position.insert("y", 0);
 
-    QMap <QString, qreal> size;
+    QMap<QString, qreal> size;
     size.insert("width", _sizeScene["width"]);
     size.insert("height", _sizeScene["height"]);
 
     _scene.insert("scene", new Scene(position, size));
 }
 
-bool GameObjects::isExistPlayer(const QString &nickname)
+bool GameObjects::isExistPlayer(const QString& nickname)
 {
-    if (_players.contains(nickname))
-    {
+    if (_players.contains(nickname)) {
         qDebug() << "Player" << nickname << "is exist!";
         return true;
     }
@@ -71,10 +70,9 @@ bool GameObjects::isExistPlayer(const QString &nickname)
     return false;
 }
 
-void GameObjects::toPlayers(const QString &nickname, Player *player, const bool operation)
+void GameObjects::toPlayers(const QString& nickname, Player* player, const bool operation)
 {
-    if (operation)
-    {
+    if (operation) {
         qDebug() << "Add player" << nickname << "to player's list...";
         _players.insert(nickname, player);
         return;
@@ -85,13 +83,13 @@ void GameObjects::toPlayers(const QString &nickname, Player *player, const bool 
     _players.remove(nickname);
 }
 
-void GameObjects::toBullets(const int id, Bullet *bullet)
+void GameObjects::toBullets(const int id, Bullet* bullet)
 {
     _bullets.insert(id, bullet);
     setSpeedMove(bullet);
 }
 
-void GameObjects::delBullets(const QString &nickname, const int id)
+void GameObjects::delBullets(const QString& nickname, const int id)
 {
     _bullets[id]->deleteLater();
     _bullets.remove(id);
@@ -103,9 +101,9 @@ int GameObjects::generateId()
     return qrand() % (999999 - 100000) + 100000;
 }
 
-QMap <QString, qreal> GameObjects::generateXY()
+QMap<QString, qreal> GameObjects::generateXY()
 {
-    QMap <QString, qreal> posXY;
+    QMap<QString, qreal> posXY;
     posXY.insert("x", qrand() % (1000 - 1) + 1);
     posXY.insert("y", qrand() % (1000 - 1) + 1);
     return posXY;
@@ -141,18 +139,17 @@ qreal GameObjects::getSpeedBullets()
     return _speedBullets;
 }
 
-QMap <int, Bullet *> GameObjects::getBullets()
+QMap<int, Bullet*> GameObjects::getBullets()
 {
     return _bullets;
 }
 
-
-QMap <QString, Player *> GameObjects::getPlayers()
+QMap<QString, Player*> GameObjects::getPlayers()
 {
     return _players;
 }
 
-QMap <QString, Scene *> GameObjects::getScene()
+QMap<QString, Scene*> GameObjects::getScene()
 {
     return _scene;
 }

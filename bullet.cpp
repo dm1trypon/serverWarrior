@@ -14,7 +14,17 @@ Bullet::Bullet(const QMap <QString, qreal> position,
     _nickname(nickname),
     _id(id)
 {
+    _tAlive.singleShot(_timeLife, this, &Bullet::die);
+}
 
+void Bullet::die()
+{
+    _alive = false;
+}
+
+bool Bullet::isAlive()
+{
+    return _alive;
 }
 
 void Bullet::setPosition(const QMap <QString, qreal> position)
@@ -45,6 +55,16 @@ QString Bullet::getNickname()
 qreal Bullet::getSpeed()
 {
     return _speed;
+}
+
+int Bullet::getTimeLife()
+{
+    return _timeLife;
+}
+
+void Bullet::setTimeLife(const int timeLife)
+{
+    _timeLife = timeLife;
 }
 
 int Bullet::getDamage()
