@@ -17,7 +17,6 @@ public:
     bool getMove();
     bool getShot();
     int getId();
-    int getShotSpeed();
 
     QMap <QString, qreal> getPosition();
     QMap <QString, qreal> getSpeed();
@@ -26,7 +25,6 @@ public:
     void setPosition(const QMap <QString, qreal> position);
     void setMaxSpeed(const QMap <QString, qreal> speed);
     void setMove(const bool isHold);
-    void setShotSpeed(const int shotSpeed);
 
     QTimer *getShotTimer();
 
@@ -64,7 +62,6 @@ private:
     qreal _maxSpeedX = 0;
     qreal _maxSpeedY = 0;
     qreal _maxSpeed;
-    int _shotSpeed = 10;
     int _life;
     int _score = 0;
     int _id;

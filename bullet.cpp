@@ -12,6 +12,7 @@ Bullet::Bullet(const QMap <QString, qreal> position,
     _click(click),
     _size(size),
     _nickname(nickname),
+    _weapon(weapon),
     _id(id)
 {
     const QMap <QString, QObject*> weapons = GameObjects::Instance().getWeapons();
@@ -32,6 +33,11 @@ Bullet::~Bullet()
     }
 
     _blaster = nullptr;
+}
+
+QString Bullet::getWeapon()
+{
+    return _weapon;
 }
 
 void Bullet::burn()

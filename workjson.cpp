@@ -89,7 +89,6 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         const qreal clickY = dataJsonObj.value("y").toDouble();
 
         const QString weapon = dataJsonObj.value("weapon").toString();
-        qDebug() << "Weapon:" << weapon;
 
         QMap<QString, qreal> click;
         click.insert("x", clickX);
@@ -123,7 +122,23 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         }
 
         player->setShot();
-        player->getShotTimer()->singleShot(player->getShotSpeed(), player, &Player::setShot);
+
+        const QMap<QString, QObject*> weapons = GameObjects::Instance().getWeapons();
+
+        if (!weapons.contains(weapon)) {
+            return;
+        }
+
+        Plazma* plazma = dynamic_cast<Plazma *>(weapons[weapon]);
+        Blaster* blaster = dynamic_cast<Blaster *>(weapons[weapon]);
+
+        if (plazma) {
+            player->getShotTimer()->singleShot(plazma->RATE_OF_FIRE, player, &Player::setShot);
+        }
+
+        if (blaster) {
+            player->getShotTimer()->singleShot(blaster->RATE_OF_FIRE, player, &Player::setShot);
+        }
 
         GameObjects::Instance().toBullets(idBullet,
             new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet));
@@ -228,6 +243,7 @@ QString WorkJson::toJsonObjects(const QMap<QString, Player*> players,
     foreach (Bullet* bullet, bullets) {
         QJsonObject bulletJsonObj;
         bulletJsonObj.insert("nickname", bullet->getNickname());
+        bulletJsonObj.insert("weapon", bullet->getWeapon());
         bulletJsonObj.insert("id_bullet", bullet->getId());
 
         QMap<QString, qreal> position = bullet->getPosition();

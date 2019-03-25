@@ -13,7 +13,10 @@ public:
     void controlPlayers(const QString &nickname, const QString &key, const bool isHold);
 
 private:
-    bool isKeyboardSticking(const QMap<QString, Player *> players, const QString &nickname, const QMap<QString, qreal> speedPlayer, const bool isHold);
+    bool isKeyboardSticking(const QMap<QString, Player *> players,
+                            const QString &nickname,
+                            const QMap<QString, qreal> speedPlayer,
+                            const bool isHold);
 };
 
 #endif // CONTROL_H

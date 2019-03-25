@@ -27,6 +27,7 @@ public:
     void setSpeedMove(const QMap <QString, qreal> speedMove);
     QMap<QString, qreal> getSize();
     bool isAlive();
+    QString getWeapon();
 private slots:
     void die();
 private:
@@ -42,6 +43,8 @@ private:
     QMap <QString, qreal> _speedMove;
 
     QString _nickname;
+    QString _weapon;
+
     int _id;
     void burn();
 };

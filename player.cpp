@@ -95,11 +95,6 @@ int Player::getId()
     return _id;
 }
 
-int Player::getShotSpeed()
-{
-    return _shotSpeed;
-}
-
 bool Player::getMove()
 {
     return _move;
@@ -207,11 +202,6 @@ void Player::setPosition(const QMap <QString, qreal> position)
 void Player::setMove(const bool isHold)
 {
     _move = isHold;
-}
-
-void Player::setShotSpeed(const int shotSpeed)
-{
-    _shotSpeed = shotSpeed;
 }
 
 void Player::setMaxSpeed(const qreal maxSpeed)
