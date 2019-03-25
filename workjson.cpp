@@ -88,6 +88,9 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         const qreal clickX = dataJsonObj.value("x").toDouble();
         const qreal clickY = dataJsonObj.value("y").toDouble();
 
+        const QString weapon = dataJsonObj.value("weapon").toString();
+        qDebug() << "Weapon:" << weapon;
+
         QMap<QString, qreal> click;
         click.insert("x", clickX);
         click.insert("y", clickY);
@@ -123,7 +126,7 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         player->getShotTimer()->singleShot(player->getShotSpeed(), player, &Player::setShot);
 
         GameObjects::Instance().toBullets(idBullet,
-            new Bullet(positionPlayerCenter, sizeBullet, click, nickname, idBullet));
+            new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet));
 
         return;
     }

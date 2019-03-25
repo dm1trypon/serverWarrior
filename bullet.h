@@ -1,6 +1,9 @@
 #ifndef BULLET_H
 #define BULLET_H
 
+#include "plazma.h"
+#include "blaster.h"
+
 #include <QObject>
 #include <QMap>
 #include <QTimer>
@@ -9,7 +12,8 @@ class Bullet : public QObject
 {
     Q_OBJECT
 public:
-    Bullet(const QMap <QString, qreal> position, const QMap<QString, qreal> size, const QMap <QString, qreal> click, const QString &nickname, const int id, QObject *parent = nullptr);
+    Bullet(const QMap <QString, qreal> position, const QMap<QString, qreal> size, const QMap <QString, qreal> click, const QString &nickname, const QString &weapon, const int id, QObject *parent = nullptr);
+    ~Bullet();
 
     void setPosition(const QMap<QString, qreal> position);
     QString getNickname();
@@ -18,23 +22,19 @@ public:
     QMap <QString, qreal> getClick();
     qreal getSpeed();
     int getTimeLife();
-    void setTimeLife(const int timeLife);
     int getDamage();
-    void setDamage(const int damage);
     QMap <QString, qreal> getSpeedMove();
     void setSpeedMove(const QMap <QString, qreal> speedMove);
-
     QMap<QString, qreal> getSize();
-    void setSpeed(const qreal speed);
     bool isAlive();
 private slots:
     void die();
 private:
     QTimer _tAlive;
     bool _alive = true;
-    qreal _speed;
-    int _damage = 8;
-    int _timeLife = 1000;
+
+    Plazma *_plazma = nullptr;
+    Blaster *_blaster = nullptr;
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _click;
@@ -43,6 +43,7 @@ private:
 
     QString _nickname;
     int _id;
+    void burn();
 };
 
 #endif // BULLET_H

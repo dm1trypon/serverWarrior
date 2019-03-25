@@ -5,16 +5,44 @@ Bullet::Bullet(const QMap <QString, qreal> position,
                const QMap <QString, qreal> size,
                const QMap <QString, qreal> click,
                const QString &nickname,
+               const QString &weapon,
                const int id, QObject *parent) :
     QObject (parent),
-    _speed(GameObjects::Instance().getSpeedBullets()),
     _position(position),
     _click(click),
     _size(size),
     _nickname(nickname),
     _id(id)
 {
-    _tAlive.singleShot(_timeLife, this, &Bullet::die);
+    const QMap <QString, QObject*> weapons = GameObjects::Instance().getWeapons();
+
+    _plazma = dynamic_cast<Plazma *>(weapons[weapon]);
+    _blaster = dynamic_cast<Blaster *>(weapons[weapon]);
+
+    qDebug() << weapon << _plazma << _blaster << weapons.keys();
+    burn();
+}
+
+Bullet::~Bullet()
+{
+    if (_plazma) {
+        _plazma = nullptr;
+
+        return;
+    }
+
+    _blaster = nullptr;
+}
+
+void Bullet::burn()
+{
+    if (_plazma) {
+        _tAlive.singleShot(_plazma->M_TIME_LIFE, this, &Bullet::die);
+
+        return;
+    }
+
+    _tAlive.singleShot(_blaster->M_TIME_LIFE, this, &Bullet::die);
 }
 
 void Bullet::die()
@@ -37,11 +65,6 @@ void Bullet::setSpeedMove(const QMap <QString, qreal> speedMove)
     _speedMove = speedMove;
 }
 
-void Bullet::setSpeed(const qreal speed)
-{
-    _speed = speed;
-}
-
 QMap <QString, qreal> Bullet::getSpeedMove()
 {
     return _speedMove;
@@ -54,27 +77,29 @@ QString Bullet::getNickname()
 
 qreal Bullet::getSpeed()
 {
-    return _speed;
+    if (_plazma) {
+        return _plazma->M_SPEED;
+    }
+
+    return _blaster->M_SPEED;
 }
 
 int Bullet::getTimeLife()
 {
-    return _timeLife;
-}
+    if (_plazma) {
+        return _plazma->M_TIME_LIFE;
+    }
 
-void Bullet::setTimeLife(const int timeLife)
-{
-    _timeLife = timeLife;
+    return _blaster->M_TIME_LIFE;
 }
 
 int Bullet::getDamage()
 {
-    return _damage;
-}
+    if (_plazma) {
+        return _plazma->M_DAMAGE;
+    }
 
-void Bullet::setDamage(const int damage)
-{
-    _damage = damage;
+    return _blaster->M_DAMAGE;
 }
 
 int Bullet::getId()

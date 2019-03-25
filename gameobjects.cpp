@@ -57,6 +57,23 @@ void GameObjects::createScene()
     size.insert("height", _sizeScene["height"]);
 
     _scene.insert("scene", new Scene(position, size));
+
+    createWeapons();
+}
+
+void GameObjects::createWeapons()
+{
+    if (!_weapons.isEmpty()) {
+        _weapons.clear();
+    }
+
+    _weapons.insert("plazma", new Plazma);
+    _weapons.insert("blaster", new Blaster);
+}
+
+QMap <QString, QObject*> GameObjects::getWeapons()
+{
+    return _weapons;
 }
 
 bool GameObjects::isExistPlayer(const QString& nickname)

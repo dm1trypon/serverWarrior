@@ -3,6 +3,8 @@
 
 #include "player.h"
 #include "bullet.h"
+#include "plazma.h"
+#include "blaster.h"
 #include "scene.h"
 #include "workjson.h"
 
@@ -41,6 +43,7 @@ public:
 
     void setLifePlayers(const int lifePlayers);
     int getLifePlayers();
+    QMap<QString, QObject *> getWeapons();
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
@@ -53,9 +56,11 @@ private:
     QMap <int, Bullet *> _bullets;
     QMap <QString, Scene *> _scene;
     QMap <QString, int> _sizeScene;
+    QMap <QString, QObject *> _weapons;
 
     bool isKeyboardSticking(const QString &nickname, const QMap <QString, qreal> speedPlayer, const bool isHold);
     void setSpeedMove(Bullet *bullet);
+    void createWeapons();
 };
 
 #endif // GAMEOBJECTS_H
