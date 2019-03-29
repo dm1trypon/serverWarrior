@@ -5,6 +5,7 @@
 #include "bullet.h"
 #include "plazma.h"
 #include "blaster.h"
+#include "machinegun.h"
 #include "scene.h"
 #include "workjson.h"
 
@@ -31,7 +32,6 @@ public:
     void createScene();
     QMap <QString, Scene *> getScene();
     qreal getSpeedPlayers();
-    qreal getSpeedBullets();
 
     void setSizeScene(const QMap <QString, int> sizeScene);
 
@@ -39,7 +39,6 @@ public:
     QMap <int, Bullet *> getBullets();
     void delBullets(const QString &nickname, const int id);
     void setSpeedPlayers(const qreal speedPlayers);
-    void setSpeedBullets(const qreal speedBullets);
 
     void setLifePlayers(const int lifePlayers);
     int getLifePlayers();
@@ -49,7 +48,6 @@ private:
     GameObjects& operator = (const GameObjects&) = delete;
 
     qreal _speedPlayers;
-    qreal _speedBullets;
     int _lifePlayers;
 
     QMap <QString, Player *> _players;

@@ -26,7 +26,7 @@ void Animation::stop()
 
 void Animation::process()
 {
-    QMap<QString, Scene*> scene = GameObjects::Instance().getScene();
+    const QMap<QString, Scene*> scene = GameObjects::Instance().getScene();
 
     onPlayers(GameObjects::Instance().getPlayers(), scene);
 
@@ -77,27 +77,27 @@ void Animation::onPlayers(const QMap<QString, Player*> players, const QMap<QStri
         }
 
         if (side == "left") {
-            horizontal = 10;
+            player->setInertSpeed(QPointF(-1, 1));
         }
 
         if (side == "right") {
-            horizontal = -10;
+            player->setInertSpeed(QPointF(-1, 1));
         }
 
         if (side == "top") {
-            vertical = 10;
+            player->setInertSpeed(QPointF(1, -1));
         }
 
         if (side == "bottom") {
-            vertical = -10;
+            player->setInertSpeed(QPointF(1, -1));
         }
 
         const QMap<QString, qreal> position = player->getPosition();
         const QMap<QString, qreal> speed = player->getSpeed();
 
         QMap<QString, qreal> newPosition;
-        newPosition.insert("x", position["x"] + speed["speed_x"] + horizontal);
-        newPosition.insert("y", position["y"] + speed["speed_y"] + vertical);
+        newPosition.insert("x", position["x"] + speed["speed_x"]);
+        newPosition.insert("y", position["y"] + speed["speed_y"]);
 
         player->setPosition(newPosition);
 
@@ -115,10 +115,10 @@ void Animation::playerRotation(Player* player)
     const QMap<QString, qreal> size = player->getSize();
     const QMap<QString, qreal> position = player->getPosDisplay();
 
-    QPointF cursor = player->getCursor();
+    const QPointF cursor = player->getCursor();
 
-    const qreal cx = position["width"] + size["width"] / 2;
-    const qreal cy = position["height"] + size["height"] / 2;
+    const qreal cx = position["width"];
+    const qreal cy = position["height"];
     const qreal angle = qAtan2(cursor.y() - cy, cursor.x() - cx) * HALF_G / PI;
 
     if (static_cast<int>(player->getRotate()) == static_cast<int>(angle)) {

@@ -3,6 +3,7 @@
 
 #include "plazma.h"
 #include "blaster.h"
+#include "machinegun.h"
 
 #include <QObject>
 #include <QMap>
@@ -36,6 +37,7 @@ private:
 
     Plazma *_plazma = nullptr;
     Blaster *_blaster = nullptr;
+    MachineGun *_machineGun = nullptr;
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _click;

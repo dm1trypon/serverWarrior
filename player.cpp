@@ -17,7 +17,7 @@ Player::Player(const QMap <QString, qreal> position,
     _id(id),
     _nickname(nickname)
 {
-    connect(&_speedTimer, &QTimer::timeout, this, &Player::setSpeed);
+    connect(&_speedTimer, &QTimer::timeout, this, &Player::inertialBraking);
     const int timeSpeed = 100;
     _speedTimer.start(timeSpeed);
 }
@@ -47,7 +47,6 @@ void Player::setShot()
 
     _isShot = false;
 }
-
 
 QTimer *Player::getShotTimer()
 {
@@ -106,7 +105,13 @@ void Player::setMaxSpeed(const QMap <QString, qreal> speed)
     _maxSpeedY = speed["speed_y"];
 }
 
-void Player::setSpeed()
+void Player::setInertSpeed(const QPointF coef)
+{
+    _speedX = _speedX * coef.x();
+    _speedY = _speedY * coef.y();
+}
+
+void Player::inertialBraking()
 {
     if (_maxSpeedX > 0.0 && _speedX < _maxSpeed)
     {
@@ -202,11 +207,6 @@ void Player::setPosition(const QMap <QString, qreal> position)
 void Player::setMove(const bool isHold)
 {
     _move = isHold;
-}
-
-void Player::setMaxSpeed(const qreal maxSpeed)
-{
-    _maxSpeed = maxSpeed;
 }
 
 qreal Player::getMaxSpeed()

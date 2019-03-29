@@ -69,7 +69,10 @@ bool Collision::checkCollisionPlayers(Player *player, const QMap <QString, Playe
     return false;
 }
 
-bool Collision::checkCollisionBullets(Bullet *bullet, const QMap <int, Bullet *> bullets, const QMap <QString, Player *> players, const QMap <QString, Scene *> scene)
+bool Collision::checkCollisionBullets(Bullet *bullet,
+                                      const QMap <int, Bullet *> bullets,
+                                      const QMap <QString, Player *> players,
+                                      const QMap <QString, Scene *> scene)
 {
     const QMap <QString, qreal> sizeBullet = bullet->getSize();
 

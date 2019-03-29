@@ -32,7 +32,6 @@ public:
     void onDamage(const int damage);
     int getScore();
     void setScore();
-    void setMaxSpeed(const qreal maxSpeed);
     qreal getMaxSpeed();
     void resetLife();
     void setCursor(const QPointF cursor);
@@ -41,8 +40,9 @@ public:
     qreal getRotate();
     const QMap <QString, qreal> getPosDisplay();
     void setPosDisplay(const QMap <QString, qreal> posDisplay);
+    void setInertSpeed(const QPointF coef);
 private slots:
-    void setSpeed();
+    void inertialBraking();
 
 public slots:
     void setShot();

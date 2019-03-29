@@ -19,8 +19,8 @@ Bullet::Bullet(const QMap <QString, qreal> position,
 
     _plazma = dynamic_cast<Plazma *>(weapons[weapon]);
     _blaster = dynamic_cast<Blaster *>(weapons[weapon]);
+    _machineGun = dynamic_cast<MachineGun *>(weapons[weapon]);
 
-    qDebug() << weapon << _plazma << _blaster << weapons.keys();
     burn();
 }
 
@@ -28,6 +28,12 @@ Bullet::~Bullet()
 {
     if (_plazma) {
         _plazma = nullptr;
+
+        return;
+    }
+
+    if (_machineGun) {
+        _machineGun = nullptr;
 
         return;
     }
@@ -44,6 +50,12 @@ void Bullet::burn()
 {
     if (_plazma) {
         _tAlive.singleShot(_plazma->M_TIME_LIFE, this, &Bullet::die);
+
+        return;
+    }
+
+    if (_machineGun) {
+        _tAlive.singleShot(_machineGun->M_TIME_LIFE, this, &Bullet::die);
 
         return;
     }
@@ -87,6 +99,10 @@ qreal Bullet::getSpeed()
         return _plazma->M_SPEED;
     }
 
+    if (_machineGun) {
+        return _machineGun->M_SPEED;
+    }
+
     return _blaster->M_SPEED;
 }
 
@@ -96,6 +112,10 @@ int Bullet::getTimeLife()
         return _plazma->M_TIME_LIFE;
     }
 
+    if (_machineGun) {
+        return _machineGun->M_TIME_LIFE;
+    }
+
     return _blaster->M_TIME_LIFE;
 }
 
@@ -103,6 +123,10 @@ int Bullet::getDamage()
 {
     if (_plazma) {
         return _plazma->M_DAMAGE;
+    }
+
+    if (_machineGun) {
+        return _machineGun->M_DAMAGE;
     }
 
     return _blaster->M_DAMAGE;

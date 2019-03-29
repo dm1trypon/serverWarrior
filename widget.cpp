@@ -109,7 +109,6 @@ void Widget::startServer()
     _buttonStart->setDisabled(true);
     _port = static_cast<quint16>(_inputPort->text().toInt());
     toSizeScene();
-    GameObjects::Instance().setSpeedBullets(_inputSpeedBullets->text().toInt());
     GameObjects::Instance().setSpeedPlayers(_inputSpeedPlayers->text().toInt());
     GameObjects::Instance().setLifePlayers(_inputLifePlayers->text().toInt());
     qDebug() << "Starting server on port:" << _port;

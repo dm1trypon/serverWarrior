@@ -9,10 +9,10 @@ public:
     Blaster() {}
 
 public:
-    const qreal M_SPEED = 18; // bullet's speed
-    const int M_DAMAGE = 4; // bullet's damage
-    const int M_TIME_LIFE = 900; // bullet's time life
-    const int RATE_OF_FIRE = 50; // bullet's rate of fire
+    const qreal M_SPEED = 14; // bullet's speed
+    const int M_DAMAGE = 6; // bullet's damage
+    const int M_TIME_LIFE = 1500; // bullet's time life
+    const int RATE_OF_FIRE = 80; // bullet's rate of fire
 };
 
 #endif // BLASTER_H

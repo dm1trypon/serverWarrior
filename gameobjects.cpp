@@ -69,6 +69,7 @@ void GameObjects::createWeapons()
 
     _weapons.insert("plazma", new Plazma);
     _weapons.insert("blaster", new Blaster);
+    _weapons.insert("machine_gun", new MachineGun);
 }
 
 QMap <QString, QObject*> GameObjects::getWeapons()
@@ -141,19 +142,9 @@ void GameObjects::setSpeedPlayers(const qreal speedPlayers)
     _speedPlayers = speedPlayers;
 }
 
-void GameObjects::setSpeedBullets(const qreal speedBullets)
-{
-    _speedBullets = speedBullets;
-}
-
 qreal GameObjects::getSpeedPlayers()
 {
     return _speedPlayers;
-}
-
-qreal GameObjects::getSpeedBullets()
-{
-    return _speedBullets;
 }
 
 QMap<int, Bullet*> GameObjects::getBullets()
