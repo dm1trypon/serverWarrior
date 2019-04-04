@@ -1,11 +1,8 @@
 ﻿#include "bullet.h"
 #include "gameobjects.h"
 
-Bullet::Bullet(const QMap <QString, qreal> position,
-               const QMap <QString, qreal> size,
-               const QMap <QString, qreal> click,
-               const QString &nickname,
-               const QString &weapon,
+Bullet::Bullet(const QMap <QString, qreal> position, const QMap <QString, qreal> size,
+               const QMap <QString, qreal> click, const QString &nickname, const QString &weapon,
                const int id, QObject *parent) :
     QObject (parent),
     _position(position),
@@ -15,6 +12,7 @@ Bullet::Bullet(const QMap <QString, qreal> position,
     _weapon(weapon),
     _id(id)
 {
+    qDebug() << "Bullet [" << position << size << click << nickname << weapon << id << "]";
     const QMap <QString, QObject*> weapons = GameObjects::Instance().getWeapons();
 
     _plazma = dynamic_cast<Plazma *>(weapons[weapon]);
@@ -41,6 +39,16 @@ Bullet::~Bullet()
     _blaster = nullptr;
 }
 
+void Bullet::setHealth(const int damage)
+{
+    _health = _health - damage;
+}
+
+int Bullet::getHealth()
+{
+    return _health;
+}
+
 QString Bullet::getWeapon()
 {
     return _weapon;
@@ -49,17 +57,20 @@ QString Bullet::getWeapon()
 void Bullet::burn()
 {
     if (_plazma) {
+        _health = _plazma->M_HEALTH;
         _tAlive.singleShot(_plazma->M_TIME_LIFE, this, &Bullet::die);
 
         return;
     }
 
     if (_machineGun) {
+        _health = _machineGun->M_HEALTH;
         _tAlive.singleShot(_machineGun->M_TIME_LIFE, this, &Bullet::die);
 
         return;
     }
 
+    _health = _blaster->M_HEALTH;
     _tAlive.singleShot(_blaster->M_TIME_LIFE, this, &Bullet::die);
 }
 

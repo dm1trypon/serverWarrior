@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QJsonArray>
+#include <QPointer>
 
 WorkJson& WorkJson::Instance()
 {
@@ -146,7 +147,7 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         }
 
         GameObjects::Instance().toBullets(idBullet,
-            new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet));
+            QPointer<Bullet>(new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet)));
 
         return;
     }
@@ -246,6 +247,10 @@ QString WorkJson::toJsonObjects(const QMap<QString, Player*> players,
     dataJsonObj.insert("players", playersJsonArr);
 
     foreach (Bullet* bullet, bullets) {
+        if (!bullet) {
+            continue;
+        }
+
         const QString nickname = bullet->getNickname();
 
         QJsonObject bulletJsonObj;

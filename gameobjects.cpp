@@ -101,9 +101,14 @@ void GameObjects::toPlayers(const QString& nickname, Player* player, const bool 
     _players.remove(nickname);
 }
 
-void GameObjects::toBullets(const int id, Bullet* bullet)
+void GameObjects::toBullets(const int id, Bullet *bullet)
 {
     _bullets.insert(id, bullet);
+
+    if (!_bullets.contains(id)) {
+        qDebug() << "Bullet" << id << "is not found!";
+    }
+
     setSpeedMove(bullet);
 }
 
@@ -116,7 +121,14 @@ void GameObjects::delBullets(const QString& nickname, const int id)
 
 int GameObjects::generateId()
 {
-    return qrand() % (999999 - 100000) + 100000;
+    const int id = qrand() % (999999 - 100000) + 100000;
+    foreach(Player *player, _players) {
+        if (player->getId() == id) {
+            qDebug() << "Warning! Id" << id << "is exist!";
+        }
+    }
+
+    return id;
 }
 
 QMap<QString, qreal> GameObjects::generateXY()

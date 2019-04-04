@@ -27,16 +27,26 @@ void Animation::stop()
 void Animation::process()
 {
     const QMap<QString, Scene*> scene = GameObjects::Instance().getScene();
+    const QMap<int, Bullet*> bullets = GameObjects::Instance().getBullets();
 
     onPlayers(GameObjects::Instance().getPlayers(), scene);
 
-    onBullets(GameObjects::Instance().getBullets(),
+    onBullets(bullets,
         GameObjects::Instance().getPlayers(),
         scene);
 
     WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(),
-        GameObjects::Instance().getBullets(),
+        bullets,
         scene));
+
+    QPair<QString, int> delBullet;
+
+    foreach (delBullet, _delBullets) {
+        qDebug() << delBullet;
+        GameObjects::Instance().delBullets(delBullet.first, delBullet.second);
+    }
+
+    _delBullets.clear();
 }
 
 void Animation::onBullets(const QMap<int, Bullet*> bullets,
@@ -44,6 +54,10 @@ void Animation::onBullets(const QMap<int, Bullet*> bullets,
     const QMap<QString, Scene*> scene)
 {
     foreach (Bullet* bullet, bullets) {
+        if (!bullet) {
+            continue;
+        }
+
         const QMap<QString, qreal> position = bullet->getPosition();
         const QMap<QString, qreal> speedMove = bullet->getSpeedMove();
 
@@ -54,11 +68,15 @@ void Animation::onBullets(const QMap<int, Bullet*> bullets,
         bullet->setPosition(newPosition);
 
         if (!bullet->isAlive()) {
-            GameObjects::Instance().delBullets(bullet->getNickname(), bullet->getId());
+            _delBullets.append(QPair<QString, int>(bullet->getNickname(), bullet->getId()));
         }
 
-        if (_collision.checkCollisionBullets(bullet, bullets, players, scene)) {
-            GameObjects::Instance().delBullets(bullet->getNickname(), bullet->getId());
+        if (_collision.checkCollisionBullets(bullet, GameObjects::Instance().getBullets(), players, scene)) {
+            if (bullet->getHealth() > 0) {
+                return;
+            }
+
+            _delBullets.append(QPair<QString, int>(bullet->getNickname(), bullet->getId()));
         }
     }
 }

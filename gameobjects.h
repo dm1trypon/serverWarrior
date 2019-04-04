@@ -51,7 +51,7 @@ private:
     int _lifePlayers;
 
     QMap <QString, Player *> _players;
-    QMap <int, Bullet *> _bullets;
+    QMap <int, Bullet*> _bullets;
     QMap <QString, Scene *> _scene;
     QMap <QString, int> _sizeScene;
     QMap <QString, QObject *> _weapons;

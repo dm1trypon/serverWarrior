@@ -13,7 +13,9 @@ class Bullet : public QObject
 {
     Q_OBJECT
 public:
-    Bullet(const QMap <QString, qreal> position, const QMap<QString, qreal> size, const QMap <QString, qreal> click, const QString &nickname, const QString &weapon, const int id, QObject *parent = nullptr);
+    Bullet(const QMap <QString, qreal> position, const QMap<QString, qreal> size, const QMap <QString, qreal> click,
+           const QString &nickname, const QString &weapon, const int id, QObject *parent = nullptr);
+
     ~Bullet();
 
     void setPosition(const QMap<QString, qreal> position);
@@ -29,6 +31,8 @@ public:
     QMap<QString, qreal> getSize();
     bool isAlive();
     QString getWeapon();
+    void setHealth(const int damage);
+    int getHealth();
 private slots:
     void die();
 private:
@@ -48,6 +52,7 @@ private:
     QString _weapon;
 
     int _id;
+    int _health;
     void burn();
 };
 

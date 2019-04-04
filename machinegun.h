@@ -13,6 +13,7 @@ public:
     const int M_DAMAGE = 3; // bullet's damage
     const int M_TIME_LIFE = 1100; // bullet's time life
     const int RATE_OF_FIRE = 40; // bullet's rate of fire
+    const int M_HEALTH = 2; // bullet's life
 };
 
 

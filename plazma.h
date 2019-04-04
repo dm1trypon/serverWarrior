@@ -14,6 +14,7 @@ public:
     const int M_DAMAGE = 17; // bullet's damage
     const int M_TIME_LIFE = 2000; // bullet's time life
     const int RATE_OF_FIRE = 600; // bullet's rate of fire
+    const int M_HEALTH = 20; // bullet's life
 };
 
 #endif // PLAZMA_H

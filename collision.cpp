@@ -5,7 +5,6 @@
 
 Collision::Collision()
 {
-
 }
 
 QString Collision::checkCollisionScene(Player *player, Scene *scene)
@@ -16,23 +15,19 @@ QString Collision::checkCollisionScene(Player *player, Scene *scene)
     const QMap <QString, qreal> positionPlayer = player->getPosition();
     const QMap <QString, qreal> positionScene = scene->getPosition();
 
-    if (positionPlayer["x"] < positionScene["x"])
-    {
+    if (positionPlayer["x"] < positionScene["x"]) {
         return "left";
     }
 
-    if (positionPlayer["x"] + sizePlayer["width"] > positionScene["x"] + sizeScene["width"])
-    {
+    if (positionPlayer["x"] + sizePlayer["width"] > positionScene["x"] + sizeScene["width"]) {
         return "right";
     }
 
-    if (positionPlayer["y"] < positionScene["y"])
-    {
+    if (positionPlayer["y"] < positionScene["y"]) {
         return "top";
     }
 
-    if (positionPlayer["y"] + sizePlayer["height"] > positionScene["y"] + sizeScene["height"])
-    {
+    if (positionPlayer["y"] + sizePlayer["height"] > positionScene["y"] + sizeScene["height"]) {
         return "bottom";
     }
 
@@ -47,22 +42,21 @@ bool Collision::checkCollisionPlayers(Player *player, const QMap <QString, Playe
     positionPlayer["x"] = positionPlayer["x"] + sizePlayer["width"] / 2;
     positionPlayer["y"] = positionPlayer["y"] + sizePlayer["height"] / 2;
 
-    foreach (Player *enemyPlayer, players)
-    {
-        if (player->getNickname() != enemyPlayer->getNickname())
-        {
-            QMap <QString, qreal> positionEnemyPlayer = enemyPlayer->getPosition();
-            positionEnemyPlayer["x"] = positionEnemyPlayer["x"] + sizePlayer["width"] / 2;
-            positionEnemyPlayer["y"] = positionEnemyPlayer["y"] + sizePlayer["height"] / 2;
+    foreach (Player *enemyPlayer, players) {
+        if (player->getNickname() == enemyPlayer->getNickname()) {
+            continue;
+        }
 
-            const qreal distWidth = positionEnemyPlayer["x"] - positionPlayer["x"];
-            const qreal distHeight = positionEnemyPlayer["y"] - positionPlayer["y"];
-            const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
+        QMap <QString, qreal> positionEnemyPlayer = enemyPlayer->getPosition();
+        positionEnemyPlayer["x"] = positionEnemyPlayer["x"] + sizePlayer["width"] / 2;
+        positionEnemyPlayer["y"] = positionEnemyPlayer["y"] + sizePlayer["height"] / 2;
 
-            if (distance < sizePlayer["width"])
-            {
-                return true;
-            }
+        const qreal distWidth = positionEnemyPlayer["x"] - positionPlayer["x"];
+        const qreal distHeight = positionEnemyPlayer["y"] - positionPlayer["y"];
+        const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
+
+        if (distance < sizePlayer["width"]) {
+            return true;
         }
     }
 
@@ -86,86 +80,90 @@ bool Collision::checkCollisionBullets(Bullet *bullet,
     {
         const QString nicknameBullet = bullet->getNickname();
 
-        if (nicknameBullet != enemyPlayer->getNickname())
-        {
-            QMap <QString, qreal> positionEnemyPlayer = enemyPlayer->getPosition();
-            const QMap <QString, qreal> sizeEnemyPlayer = enemyPlayer->getSize();
-            positionEnemyPlayer["x"] = positionEnemyPlayer["x"] + sizeEnemyPlayer["width"] / 2;
-            positionEnemyPlayer["y"] = positionEnemyPlayer["y"] + sizeEnemyPlayer["height"] / 2;
+        if (nicknameBullet == enemyPlayer->getNickname()) {
+            continue;
+        }
 
-            const qreal distWidth = positionEnemyPlayer["x"] - positionBullet["x"];
-            const qreal distHeight = positionEnemyPlayer["y"] - positionBullet["y"];
-            const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
+        QMap <QString, qreal> positionEnemyPlayer = enemyPlayer->getPosition();
 
-            if (distance < sizeBullet["width"] / 2 + sizeEnemyPlayer["width"] / 2)
-            {
-                collision = true;
-                enemyPlayer->onDamage(bullet->getDamage());
+        const QMap <QString, qreal> sizeEnemyPlayer = enemyPlayer->getSize();
 
-                if (enemyPlayer->getLife() <= 0)
-                {
-                    enemyPlayer->resetLife();
+        positionEnemyPlayer["x"] = positionEnemyPlayer["x"] + sizeEnemyPlayer["width"] / 2;
+        positionEnemyPlayer["y"] = positionEnemyPlayer["y"] + sizeEnemyPlayer["height"] / 2;
 
-                    if (!players.contains(nicknameBullet))
-                    {
-                        break;
-                    }
+        const qreal distWidth = positionEnemyPlayer["x"] - positionBullet["x"];
+        const qreal distHeight = positionEnemyPlayer["y"] - positionBullet["y"];
+        const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
 
-                    players[nicknameBullet]->setScore();
+        if (distance < sizeBullet["width"] / 2 + sizeEnemyPlayer["width"] / 2) {
+            bullet->setHealth(bullet->getHealth());
+
+            collision = true;
+            enemyPlayer->onDamage(bullet->getDamage());
+
+            if (enemyPlayer->getLife() <= 0) {
+                enemyPlayer->resetLife();
+
+                if (!players.contains(nicknameBullet)) {
+                    break;
                 }
 
-                break;
+                players[nicknameBullet]->setScore();
             }
+
+            break;
         }
     }
 
-    foreach (Bullet *enemyBullet, bullets)
-    {
-        if (bullet->getNickname() != enemyBullet->getNickname())
-        {
-            QMap <QString, qreal> positionEnemyBullet = enemyBullet->getPosition();
-            positionEnemyBullet["x"] = positionEnemyBullet["x"] + sizeBullet["width"] / 2;
-            positionEnemyBullet["y"] = positionEnemyBullet["y"] + sizeBullet["height"] / 2;
+    foreach (Bullet *enemyBullet, bullets) {
+        if (!enemyBullet) {
+            continue;
+        }
 
-            const qreal distWidth = positionEnemyBullet["x"] - positionBullet["x"];
-            const qreal distHeight = positionEnemyBullet["y"] - positionBullet["y"];
-            const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
+        if (bullet->getNickname() == enemyBullet->getNickname()) {
+            continue;
+        }
 
-            if (distance < sizeBullet["width"])
-            {
-                collision = true;
-                break;
-            }
+        QMap <QString, qreal> positionEnemyBullet = enemyBullet->getPosition();
+        positionEnemyBullet["x"] = positionEnemyBullet["x"] + sizeBullet["width"] / 2;
+        positionEnemyBullet["y"] = positionEnemyBullet["y"] + sizeBullet["height"] / 2;
+
+        const qreal distWidth = positionEnemyBullet["x"] - positionBullet["x"];
+        const qreal distHeight = positionEnemyBullet["y"] - positionBullet["y"];
+        const qreal distance = qAbs(sqrt(distWidth * distWidth + distHeight * distHeight));
+
+        if (distance < sizeBullet["width"]) {
+            enemyBullet->setHealth(bullet->getDamage());
+            bullet->setHealth(enemyBullet->getDamage());
+
+            collision = true;
+            break;
         }
     }
 
     const QMap <QString, qreal> positionScene = scene["scene"]->getPosition();
     const QMap <QString, qreal> sizeScene = scene["scene"]->getSize();
 
-    if (positionBullet["x"] < positionScene["x"])
-    {
+    if (isBulletSceneCollision(positionBullet, positionScene, sizeBullet, sizeScene)) {
+        bullet->setHealth(bullet->getHealth());
+
         collision = true;
     }
 
-    if (positionBullet["x"] + sizeBullet["width"] / 2 > positionScene["x"] + sizeScene["width"])
-    {
-        collision = true;
-    }
-
-    if (positionBullet["y"] < positionScene["y"])
-    {
-        collision = true;
-    }
-
-    if (positionBullet["y"] + sizeBullet["height"] / 2 > positionScene["y"] + sizeScene["height"])
-    {
-        collision = true;
-    }
-
-    if (collision)
-    {
+    if (collision) {
         return true;
     }
 
     return false;
+}
+
+bool Collision::isBulletSceneCollision(const QMap <QString, qreal> positionBullet,
+                                       const QMap <QString, qreal> positionScene,
+                                       const QMap <QString, qreal> sizeBullet,
+                                       const QMap <QString, qreal> sizeScene)
+{
+    return positionBullet["x"] < positionScene["x"]
+            || positionBullet["x"] + sizeBullet["width"] / 2 > positionScene["x"] + sizeScene["width"]
+            || positionBullet["y"] < positionScene["y"]
+            || positionBullet["y"] + sizeBullet["height"] / 2 > positionScene["y"] + sizeScene["height"];
 }
