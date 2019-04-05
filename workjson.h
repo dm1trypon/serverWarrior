@@ -18,6 +18,7 @@ class WorkJson : public QObject
 private:
     const bool REMOVE = false;
     const bool APPEND = true;
+    int cache_id = 0;
 
     Control _control;
     QList <QWebSocket *> _clientsList;

@@ -12,7 +12,6 @@ Bullet::Bullet(const QMap <QString, qreal> position, const QMap <QString, qreal>
     _weapon(weapon),
     _id(id)
 {
-    qDebug() << "Bullet [" << position << size << click << nickname << weapon << id << "]";
     const QMap <QString, QObject*> weapons = GameObjects::Instance().getWeapons();
 
     _plazma = dynamic_cast<Plazma *>(weapons[weapon]);

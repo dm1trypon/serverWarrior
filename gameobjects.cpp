@@ -114,7 +114,7 @@ void GameObjects::toBullets(const int id, Bullet *bullet)
 
 void GameObjects::delBullets(const QString& nickname, const int id)
 {
-    _bullets[id]->deleteLater();
+    delete _bullets[id];
     _bullets.remove(id);
     WorkJson::Instance().toSend(WorkJson::Instance().toJsonRemove(nickname, id));
 }
@@ -122,8 +122,9 @@ void GameObjects::delBullets(const QString& nickname, const int id)
 int GameObjects::generateId()
 {
     const int id = qrand() % (999999 - 100000) + 100000;
-    foreach(Player *player, _players) {
-        if (player->getId() == id) {
+
+    foreach(Bullet *bullet, _bullets) {
+        if (bullet->getId() == id) {
             qDebug() << "Warning! Id" << id << "is exist!";
         }
     }

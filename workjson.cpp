@@ -334,6 +334,12 @@ QString WorkJson::toJsonDisconnection(const QString& nickname)
 
 QString WorkJson::toJsonRemove(const QString& nickname, const int id)
 {
+    if (cache_id == id) {
+        qDebug() << "Warning! Double removing bullet! Id:" << id;
+    }
+
+    cache_id = id;
+
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "remove");
     dataJsonObj.insert("nickname", nickname);

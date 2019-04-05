@@ -39,10 +39,19 @@ void Animation::process()
         bullets,
         scene));
 
+    if (_delBullets.isEmpty()) {
+        return;
+    }
+
+    onDelBullets();
+
+}
+
+void Animation::onDelBullets()
+{
     QPair<QString, int> delBullet;
 
     foreach (delBullet, _delBullets) {
-        qDebug() << delBullet;
         GameObjects::Instance().delBullets(delBullet.first, delBullet.second);
     }
 
@@ -69,6 +78,7 @@ void Animation::onBullets(const QMap<int, Bullet*> bullets,
 
         if (!bullet->isAlive()) {
             _delBullets.append(QPair<QString, int>(bullet->getNickname(), bullet->getId()));
+            return;
         }
 
         if (_collision.checkCollisionBullets(bullet, GameObjects::Instance().getBullets(), players, scene)) {
