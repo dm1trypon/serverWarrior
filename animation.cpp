@@ -8,7 +8,6 @@
 Animation::Animation(QObject* parent)
     : QObject(parent)
 {
-    qDebug() << "Animation has been created.";
     connect(&_animationTimer, &QTimer::timeout, this, &Animation::process);
 }
 
@@ -26,36 +25,40 @@ void Animation::stop()
 
 void Animation::process()
 {
-    const QMap<QString, Scene*> scene = GameObjects::Instance().getScene();
-    const QMap<int, Bullet*> bullets = GameObjects::Instance().getBullets();
+    const QMap<QString, Player*> players = GameObjects::Instance().getPlayers();
 
-    onPlayers(GameObjects::Instance().getPlayers(), scene);
-
-    onBullets(bullets,
-        GameObjects::Instance().getPlayers(),
-        scene);
-
-    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(),
-        bullets,
-        scene));
-
-    if (_delBullets.isEmpty()) {
+    if (players.isEmpty()) {
         return;
     }
 
-    onDelBullets();
+    const QMap<QString, Scene*> scene = GameObjects::Instance().getScene();
 
+
+    QMap<int, Bullet*> bullets = GameObjects::Instance().getBullets();
+
+    onPlayers(players, scene);
+    onBullets(bullets, players, scene);
+
+    if (!_delBullets.isEmpty()) {
+        bullets = onDelBullets(bullets);
+    }
+
+    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), bullets, scene));
 }
 
-void Animation::onDelBullets()
+QMap<int, Bullet*> Animation::onDelBullets(QMap<int, Bullet*> bullets)
 {
     QPair<QString, int> delBullet;
 
     foreach (delBullet, _delBullets) {
+        bullets.remove(delBullet.second);
+
         GameObjects::Instance().delBullets(delBullet.first, delBullet.second);
     }
 
     _delBullets.clear();
+
+    return bullets;
 }
 
 void Animation::onBullets(const QMap<int, Bullet*> bullets,
@@ -78,7 +81,7 @@ void Animation::onBullets(const QMap<int, Bullet*> bullets,
 
         if (!bullet->isAlive()) {
             _delBullets.append(QPair<QString, int>(bullet->getNickname(), bullet->getId()));
-            return;
+            continue;
         }
 
         if (_collision.checkCollisionBullets(bullet, GameObjects::Instance().getBullets(), players, scene)) {

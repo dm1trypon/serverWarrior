@@ -27,11 +27,6 @@ QString Player::getNickname()
     return _nickname;
 }
 
-void Player::setPosDisplay(const QMap <QString, qreal> posDisplay)
-{
-    _posDisplay = posDisplay;
-}
-
 const QMap <QString, qreal> Player::getPosDisplay()
 {
     return _posDisplay;
@@ -174,8 +169,6 @@ void Player::onDamage(const int damage)
     }
 
     _position = GameObjects::Instance().generateXY();
-//    WorkJson::Instance().toSend(WorkJson::Instance().toJsonDie(_nickname));
-//    GameObjects::Instance().toPlayers(_nickname, this, REMOVE);
 }
 
 void Player::setCursor(const QPointF cursor)

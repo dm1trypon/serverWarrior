@@ -39,7 +39,6 @@ public:
     void setRotate(const qreal rotate);
     qreal getRotate();
     const QMap <QString, qreal> getPosDisplay();
-    void setPosDisplay(const QMap <QString, qreal> posDisplay);
     void setInertSpeed(const QPointF coef);
 private slots:
     void inertialBraking();

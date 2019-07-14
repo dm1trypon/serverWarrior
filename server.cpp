@@ -48,7 +48,7 @@ void Server::onNewConnection()
     connect(pSocket, &QWebSocket::textMessageReceived, this, &Server::processTextMessage);
     connect(pSocket, &QWebSocket::disconnected, this, &Server::socketDisconnected);
 
-    pSocket->sendTextMessage(WorkJson::Instance().toJson("verify"));
+    pSocket->sendTextMessage(WorkJson::Instance().toJsonVerify());
 }
 
 void Server::processTextMessage(const QString &data)
@@ -60,8 +60,7 @@ void Server::processTextMessage(const QString &data)
 
 void Server::sendAll(const QString &data)
 {
-    foreach (QWebSocket* client, WorkJson::Instance().getClientsList())
-    {   
+    foreach(QWebSocket* client, WorkJson::Instance().getClientsList()) {
         client->sendTextMessage(data);
     }
 }

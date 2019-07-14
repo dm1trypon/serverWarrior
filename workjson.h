@@ -32,7 +32,7 @@ public:
     static WorkJson& Instance();
 
     QJsonValue parseJson(const QString &field, const QJsonObject dataJsonObj);
-    QString toJson(const QString &method);
+    QString toJsonVerify();
     QString toJsonError(const QString &error);
     QString toJsonConnection(const QString &nickname, const int idPlayer, const QMap<QString, qreal> positionPlayer);
     QString toJsonObjects(QMap<QString, Player *> players, const QMap<int, Bullet *> bullets, const QMap<QString, Scene *> scene);
@@ -46,7 +46,6 @@ public:
     void setClientsList(QList<QWebSocket *> clientsList);
     void setNameClients(QMap<QWebSocket *, QString> nameClients);
     QMap <QWebSocket *, QString> getNameClients();
-    QString toJsonDie(const QString &nickname);
 signals:
     void signalToSend(QString);
 };

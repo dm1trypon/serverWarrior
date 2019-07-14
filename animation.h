@@ -36,7 +36,7 @@ private:
                    const QMap <QString, Scene *> scene);
 
     void playerRotation(Player *player);
-    void onDelBullets();
+    QMap<int, Bullet *> onDelBullets(QMap<int, Bullet *> bullets);
 };
 
 #endif // ANIMATION_H

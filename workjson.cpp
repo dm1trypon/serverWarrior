@@ -151,24 +151,6 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
 
         return;
     }
-
-    if (dataJsonObj.value("method") == "resurrection") {
-        const QString nickname = dataJsonObj.value("nickname").toString();
-        const int idPlayer = GameObjects::Instance().generateId();
-        const QMap<QString, qreal> positionPlayer = GameObjects::Instance().generateXY();
-
-        QMap<QString, qreal> sizePlayer;
-        sizePlayer.insert("width", 100);
-        sizePlayer.insert("height", 100);
-
-        //        GameObjects::Instance().toPlayers(nickname,
-        //                                          new Player(positionPlayer, sizePlayer, nickname, idPlayer), APPEND);
-
-        toSend(toJsonObjects(GameObjects::Instance().getPlayers(),
-            GameObjects::Instance().getBullets(),
-            GameObjects::Instance().getScene()));
-        return;
-    }
 }
 
 void WorkJson::setClientsList(QList<QWebSocket*> clientsList)
@@ -203,10 +185,10 @@ QJsonValue WorkJson::parseJson(const QString& field, const QJsonObject dataJsonO
     return dataJsonObj.value(field);
 }
 
-QString WorkJson::toJson(const QString& method)
+QString WorkJson::toJsonVerify()
 {
     QJsonObject dataJsonObj;
-    dataJsonObj.insert("method", method);
+    dataJsonObj.insert("method", "verify");
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
 
@@ -350,18 +332,8 @@ QString WorkJson::toJsonRemove(const QString& nickname, const int id)
     return data;
 }
 
-QString WorkJson::toJsonDie(const QString& nickname)
-{
-    QJsonObject dataJsonObj;
-    dataJsonObj.insert("method", "die");
-    dataJsonObj.insert("nickname", nickname);
-    QJsonDocument dataJsonDoc(dataJsonObj);
-    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
-
-    return data;
-}
-
 void WorkJson::toSend(const QString& data)
 {
+    qDebug() << data;
     emit signalToSend(data);
 }

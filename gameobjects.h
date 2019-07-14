@@ -3,9 +3,7 @@
 
 #include "player.h"
 #include "bullet.h"
-#include "plazma.h"
-#include "blaster.h"
-#include "machinegun.h"
+#include "weapons.h"
 #include "scene.h"
 #include "workjson.h"
 
@@ -21,28 +19,29 @@ public:
     static GameObjects& Instance();
 
     bool isExistPlayer(const QString &nickname);
-    void toPlayers(const QString &nickname, Player *player, const bool operation);
 
-    int generateId();
-    QMap <QString, qreal> generateXY();
-    QMap <QString, Player *> getPlayers();
-    void controlPlayers(const QString &nickname, const QString &key, const bool isHold);
-    QMap <QString, Player *> setPlayers(QMap <QString, Player *> players);
-    void clearList();
-    void createScene();
-    QMap <QString, Scene *> getScene();
     qreal getSpeedPlayers();
 
-    void setSizeScene(const QMap <QString, int> sizeScene);
+    int generateId();
+    int getLifePlayers();
 
-    void toBullets(const int id, Bullet *bullet);
+    QMap <QString, qreal> generateXY();
+    QMap <QString, Player *> getPlayers();
+    QMap <QString, Player *> setPlayers(QMap <QString, Player *> players);
+    QMap <QString, Scene *> getScene();
     QMap <int, Bullet *> getBullets();
+    QMap<QString, QObject *> getWeapons();
+
+    void toPlayers(const QString &nickname, Player *player, const bool operation);
+    void clearList();
+    void createScene();
+    void setSizeScene(const QMap <QString, int> sizeScene);
+    void toBullets(const int id, Bullet *bullet);
     void delBullets(const QString &nickname, const int id);
     void setSpeedPlayers(const qreal speedPlayers);
-
     void setLifePlayers(const int lifePlayers);
-    int getLifePlayers();
-    QMap<QString, QObject *> getWeapons();
+    void controlPlayers(const QString &nickname, const QString &key, const bool isHold);
+
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;

@@ -48,9 +48,7 @@ HEADERS += \
     collision.h \
     control.h \
     bullet.h \
-    plazma.h \
-    blaster.h \
-    machinegun.h
+    weapons.h
 
 FORMS += \
         widget.ui

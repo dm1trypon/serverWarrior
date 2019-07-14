@@ -1,9 +1,7 @@
 #ifndef BULLET_H
 #define BULLET_H
 
-#include "plazma.h"
-#include "blaster.h"
-#include "machinegun.h"
+#include "weapons.h"
 
 #include <QObject>
 #include <QMap>

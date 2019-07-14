@@ -116,20 +116,13 @@ void GameObjects::delBullets(const QString& nickname, const int id)
 {
     delete _bullets[id];
     _bullets.remove(id);
+
     WorkJson::Instance().toSend(WorkJson::Instance().toJsonRemove(nickname, id));
 }
 
 int GameObjects::generateId()
 {
-    const int id = qrand() % (999999 - 100000) + 100000;
-
-    foreach(Bullet *bullet, _bullets) {
-        if (bullet->getId() == id) {
-            qDebug() << "Warning! Id" << id << "is exist!";
-        }
-    }
-
-    return id;
+    return qrand() % (999999 - 100000) + 100000;;
 }
 
 QMap<QString, qreal> GameObjects::generateXY()
@@ -137,6 +130,7 @@ QMap<QString, qreal> GameObjects::generateXY()
     QMap<QString, qreal> posXY;
     posXY.insert("x", qrand() % (1000 - 1) + 1);
     posXY.insert("y", qrand() % (1000 - 1) + 1);
+
     return posXY;
 }
 
