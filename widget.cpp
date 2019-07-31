@@ -40,17 +40,12 @@ void Widget::createElements()
     _labelSpeedPlayers = new QLabel("Speed players:");
 
     _inputSpeedPlayers = new QLineEdit();
-    _inputSpeedPlayers->setText("4");
-
-    _labelSpeedBullets = new QLabel("Speed bullets:");
-
-    _inputSpeedBullets = new QLineEdit();
-    _inputSpeedBullets->setText("7");
+    _inputSpeedPlayers->setText("7");
 
     _labelLifePlayers = new QLabel("Max life:");
 
     _inputLifePlayers = new QLineEdit();
-    _inputLifePlayers->setText("5");
+    _inputLifePlayers->setText("100");
 
     _buttonStart = new QPushButton("Start");
     connect(_buttonStart, &QPushButton::clicked, this, &Widget::startServer);
@@ -78,25 +73,23 @@ void Widget::createElements()
     _mainLayout->addWidget(_inputHeight, 3, 3, 1, 1);
     _mainLayout->addWidget(_labelSpeedPlayers, 4, 1, 1, 1);
     _mainLayout->addWidget(_inputSpeedPlayers, 4, 2, 1, 2);
-    _mainLayout->addWidget(_labelSpeedBullets, 5, 1, 1, 1);
-    _mainLayout->addWidget(_inputSpeedBullets, 5, 2, 1, 2);
-    _mainLayout->addWidget(_labelLifePlayers, 6, 1, 1, 1);
-    _mainLayout->addWidget(_inputLifePlayers, 6, 2, 1, 2);
-    _mainLayout->addWidget(_buttonStart, 7, 1, 1, 3);
-    _mainLayout->addWidget(_buttonStop, 7, 1, 1, 3);
-    _mainLayout->addWidget(_labelList, 8, 1, 1, 2);
-    _mainLayout->addWidget(_buttonMore, 8, 3, 1, 1);
-    _mainLayout->addWidget(_listClients, 9, 1, 3, 3);
+    _mainLayout->addWidget(_labelLifePlayers, 5, 1, 1, 1);
+    _mainLayout->addWidget(_inputLifePlayers, 5, 2, 1, 2);
+    _mainLayout->addWidget(_buttonStart, 6, 1, 1, 3);
+    _mainLayout->addWidget(_buttonStop, 6, 1, 1, 3);
+    _mainLayout->addWidget(_labelList, 7, 1, 1, 2);
+    _mainLayout->addWidget(_buttonMore, 7, 3, 1, 1);
+    _mainLayout->addWidget(_listClients, 8, 1, 3, 3);
 
     setLayout(_mainLayout);
 }
 
 void Widget::timers(const bool isStarted)
 {
-    if (isStarted)
-    {
+    if (isStarted) {
         _updateTimer.start(UPDATE);
         _animation.start();
+
         return;
     }
 
@@ -108,16 +101,19 @@ void Widget::startServer()
 {
     _buttonStart->setDisabled(true);
     _port = static_cast<quint16>(_inputPort->text().toInt());
+
     toSizeScene();
+
     GameObjects::Instance().setSpeedPlayers(_inputSpeedPlayers->text().toInt());
     GameObjects::Instance().setLifePlayers(_inputLifePlayers->text().toInt());
+
     qDebug() << "Starting server on port:" << _port;
     _server = new Server(_port);
 
-    if (_server->getError())
-    {
+    if (_server->getError()) {
         onErrorServer();
         _server->deleteLater();
+
         return;
     }
 
@@ -127,7 +123,9 @@ void Widget::startServer()
 void Widget::stopServer()
 {
     _server->deleteLater();
+
     GameObjects::Instance().clearList();
+
     onStopServer();
 }
 
@@ -137,6 +135,7 @@ void Widget::typeList()
     {
         _buttonMore->setText("More");
         _fullInfo = false;
+
         return;
     }
 
@@ -173,20 +172,20 @@ void Widget::onErrorServer()
 void Widget::showClients()
 {
      _listClients->clear();
-    foreach (Player *player, GameObjects::Instance().getPlayers())
-    {
-        if (_fullInfo)
-        {
-            _listClients->addItem(player->getNickname() + " {PLAYER_ID: "
-                                  + QString::number(player->getId())
-                                  + ", POSITION: [" + QString::number(player->getPosition()["x"])
-                                  + ":" + QString::number(player->getPosition()["y"])
-                                  + "], MOVE: " + QString::number(player->getMove()) + "}");
-        }
-        else
-        {
+
+    foreach (Player *player, GameObjects::Instance().getPlayers()) {
+        if (_fullInfo) {
             _listClients->addItem(player->getNickname());
+
+            continue;
         }
+
+        _listClients->addItem(player->getNickname() + " {PLAYER_ID: "
+                              + QString::number(player->getId())
+                              + ", POSITION: [" + QString::number(player->getPosition()["x"])
+                              + ":" + QString::number(player->getPosition()["y"])
+                              + "], MOVE: " + QString::number(player->getMove()) + "}");
+
     }
 }
 
@@ -199,15 +198,14 @@ void Widget::elements(const bool isStarted)
         _labelSize->hide();
         _inputWidth->hide();
         _inputHeight->hide();
-        _inputSpeedBullets->hide();
         _inputSpeedPlayers->hide();
         _inputLifePlayers->hide();
-        _labelSpeedBullets->hide();
         _labelLifePlayers->hide();
         _labelSpeedPlayers->hide();
         _buttonStart->hide();
         _labelInfo->setText("<H2>Server started on port: " + QString::number(_port) + "</H2>");
         _buttonStop->show();
+
         return;
     }
 
@@ -215,9 +213,7 @@ void Widget::elements(const bool isStarted)
     _inputPort->show();
     _labelPort->show();
     _buttonStart->show();
-    _inputSpeedBullets->show();
     _inputSpeedPlayers->show();
-    _labelSpeedBullets->show();
     _labelSpeedPlayers->show();
     _labelLifePlayers->show();
     _labelSize->show();

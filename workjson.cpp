@@ -52,8 +52,7 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
             new Player(positionPlayer, posDisplay, sizePlayer, nickname, idPlayer), APPEND);
 
         toSend(toJsonConnection(nickname, idPlayer, positionPlayer));
-        toSend(toJsonObjects(GameObjects::Instance().getPlayers(),
-            GameObjects::Instance().getBullets(),
+        toSend(toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(),
             GameObjects::Instance().getScene()));
 
         return;
@@ -334,6 +333,5 @@ QString WorkJson::toJsonRemove(const QString& nickname, const int id)
 
 void WorkJson::toSend(const QString& data)
 {
-    qDebug() << data;
     emit signalToSend(data);
 }

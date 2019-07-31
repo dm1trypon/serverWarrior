@@ -15,62 +15,39 @@ void Control::controlPlayers(const QString &nickname, const QString &key, const 
 
     QMap <QString, qreal> speedPlayer;
 
-    if (key == "up")
-    {
+    if (key == "up") {
         speedPlayer.insert("speed_x", 0);
         speedPlayer.insert("speed_y", -speed);
-    }
-
-    if (key == "down")
-    {
+    } else if (key == "down") {
         speedPlayer.insert("speed_x", 0);
         speedPlayer.insert("speed_y", speed);
-    }
-
-    if (key == "left")
-    {
+    } else if (key == "left") {
         speedPlayer.insert("speed_x", -speed);
         speedPlayer.insert("speed_y", 0);
-    }
-
-    if (key == "right")
-    {
+    } else if (key == "right") {
         speedPlayer.insert("speed_x", speed);
         speedPlayer.insert("speed_y", 0);
-    }
-
-    if (key == "left_up")
-    {
+    } else if (key == "left_up") {
         speedPlayer.insert("speed_x", -speed);
         speedPlayer.insert("speed_y", -speed);
-    }
-
-    if (key == "left_down")
-    {
+    } else if (key == "left_down") {
         speedPlayer.insert("speed_x", -speed);
         speedPlayer.insert("speed_y", speed);
-    }
-
-    if (key == "right_up")
-    {
+    } else if (key == "right_up") {
         speedPlayer.insert("speed_x", speed);
         speedPlayer.insert("speed_y", -speed);
-    }
-
-    if (key == "right_down")
-    {
+    } else if (key == "right_down") {
         speedPlayer.insert("speed_x", speed);
         speedPlayer.insert("speed_y", speed);
     }
 
-    if (isKeyboardSticking(players, nickname, speedPlayer, isHold))
-    {
+    if (isKeyboardSticking(players, nickname, speedPlayer, isHold)) {
         qWarning() << "Warning! Sticking keybord, check client!";
+
         return;
     }
 
-    if (!isHold)
-    {
+    if (!isHold) {
         speedPlayer.insert("speed_x", 0);
         speedPlayer.insert("speed_y", 0);
     }
@@ -79,7 +56,8 @@ void Control::controlPlayers(const QString &nickname, const QString &key, const 
     players[nickname]->setMove(isHold);
 }
 
-bool Control::isKeyboardSticking(const QMap <QString, Player *> players, const QString &nickname, const QMap <QString, qreal> speedPlayer, const bool isHold)
+bool Control::isKeyboardSticking(const QMap <QString, Player *> players, const QString &nickname,
+                                 const QMap <QString, qreal> speedPlayer, const bool isHold)
 {
     return players[nickname]->getSpeed() == speedPlayer && players[nickname]->getMove() == isHold;
 }

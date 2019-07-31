@@ -14,12 +14,15 @@ Server::Server(const quint16 port, QObject *parent) :
 {
     if (!_webSocketServer->listen(QHostAddress::Any, port)) {
         qWarning() << "Failed to start a websocket server!";
+
         return;
     }
 
     qDebug() << "Echoserver listening on port" << port;
+
     connect(_webSocketServer, &QWebSocketServer::newConnection, this, &Server::onNewConnection);
     connect(_webSocketServer, &QWebSocketServer::closed, this, &Server::closed);
+
     _error = false;
 
     GameObjects::Instance().createScene();
@@ -75,8 +78,7 @@ void Server::socketDisconnected()
 
     QMap <QWebSocket *, QString> nameClients = WorkJson::Instance().getNameClients();
 
-    if (!nameClients.contains(pClient))
-    {
+    if (!nameClients.contains(pClient)) {
         qWarning() << "Warning! Client is not exist in clients list:" << pClient;
         return;
     }
@@ -90,9 +92,9 @@ void Server::socketDisconnected()
 
     qDebug() << "Remove player...:" << nickname;
 
-    if (!GameObjects::Instance().isExistPlayer(nickname))
-    {
+    if (!GameObjects::Instance().isExistPlayer(nickname)) {
         qWarning() << "Warning! Player is not exist in players list:" << nickname;
+
         return;
     }
 

@@ -39,13 +39,11 @@ private:
     QLabel *_labelInfo;
     QLabel *_labelSize;
     QLabel *_labelSpeedPlayers;
-    QLabel *_labelSpeedBullets;
     QLabel *_labelLifePlayers;
     QLineEdit *_inputPort;
     QLineEdit *_inputWidth;
     QLineEdit *_inputHeight;
     QLineEdit *_inputSpeedPlayers;
-    QLineEdit *_inputSpeedBullets;
     QLineEdit *_inputLifePlayers;
     QListWidget *_listClients;
     QPushButton *_buttonStart;

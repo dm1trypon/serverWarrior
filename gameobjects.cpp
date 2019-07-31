@@ -81,10 +81,12 @@ bool GameObjects::isExistPlayer(const QString& nickname)
 {
     if (_players.contains(nickname)) {
         qDebug() << "Player" << nickname << "is exist!";
+
         return true;
     }
 
     qDebug() << "Player" << nickname << "is not exist!";
+
     return false;
 }
 
