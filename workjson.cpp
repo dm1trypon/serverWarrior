@@ -5,6 +5,8 @@
 #include <QMap>
 #include <QJsonArray>
 #include <QPointer>
+#include <QtConcurrent/QtConcurrent>
+#include <QFuture>
 
 WorkJson& WorkJson::Instance()
 {
@@ -51,7 +53,6 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         GameObjects::Instance().toPlayers(nickname,
             new Player(positionPlayer, posDisplay, sizePlayer, nickname, idPlayer), APPEND);
 
-        toSend(toJsonConnection(nickname, idPlayer, positionPlayer));
         toSend(toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(),
             GameObjects::Instance().getScene()));
 
@@ -81,6 +82,7 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
             return;
         }
 
+        players[nickname]->setIsShooting(isShot);
         players[nickname]->setCursor(QPointF(clickX, clickY));
 
         if (!isShot) {
@@ -102,60 +104,71 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         QMap<QString, qreal> sizeBullet;
         sizeBullet.insert("width", 30);
         sizeBullet.insert("height", 30);
-        // IS SHOT?????
-        while (players[nickname]->getCursor() == QPointF(clickX, clickY)) {
-            const int idBullet = GameObjects::Instance().generateId();
 
-            Player* player = nullptr;
-
-            if (GameObjects::Instance().getPlayers().contains(nickname)) {
-                player = GameObjects::Instance().getPlayers()[nickname];
-            }
-
-            if (!player) {
-                return;
-            }
-
-            const QMap<QString, qreal> sizePlayer = player->getSize();
-            const QMap<QString, qreal> positionPlayer = player->getPosition();
-
-            QMap<QString, qreal> positionPlayerCenter;
-            positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2 - sizeBullet["width"] / 2);
-            positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2 - sizeBullet["height"] / 2);
-
-            if (!player->getShot()) {
-                return;
-            }
-
-            player->setShot();
-
-            const QMap<QString, QObject*> weapons = GameObjects::Instance().getWeapons();
-
-            if (!weapons.contains(weapon)) {
-                return;
-            }
-
-            Plazma* plazma = dynamic_cast<Plazma *>(weapons[weapon]);
-            Blaster* blaster = dynamic_cast<Blaster *>(weapons[weapon]);
-            MachineGun* machineGun = dynamic_cast<MachineGun *>(weapons[weapon]);
-
-            if (plazma) {
-                player->getShotTimer()->singleShot(plazma->RATE_OF_FIRE, player, &Player::setShot);
-            }
-
-            if (blaster) {
-                player->getShotTimer()->singleShot(blaster->RATE_OF_FIRE, player, &Player::setShot);
-            }
-
-            if (machineGun) {
-                player->getShotTimer()->singleShot(machineGun->RATE_OF_FIRE, player, &Player::setShot);
-            }
-
-            GameObjects::Instance().toBullets(idBullet,
-                QPointer<Bullet>(new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet)));
-        }
+        QtConcurrent::run(this, &WorkJson::onNextShot, nickname, weapon, click, sizeBullet, players);
 
         return;
+    }
+}
+
+void WorkJson::onNextShot(const QString &nickname, const QString &weapon, const QMap<QString, qreal> click,
+                          const QMap<QString, qreal> sizeBullet, const QMap<QString, Player*> players)
+{
+    while (players[nickname]->getCursor() == QPointF(click["x"], click["y"])) {
+        qDebug() << players[nickname]->getCursor() << QPointF(click["x"], click["y"]);
+        if (!players[nickname]->getIsShooting()) {
+            return;
+        }
+
+        const int idBullet = GameObjects::Instance().generateId();
+
+        Player* player = nullptr;
+
+        if (GameObjects::Instance().getPlayers().contains(nickname)) {
+            player = GameObjects::Instance().getPlayers()[nickname];
+        }
+
+        if (!player) {
+            return;
+        }
+
+        const QMap<QString, qreal> sizePlayer = player->getSize();
+        const QMap<QString, qreal> positionPlayer = player->getPosition();
+
+        QMap<QString, qreal> positionPlayerCenter;
+        positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2 - sizeBullet["width"] / 2);
+        positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2 - sizeBullet["height"] / 2);
+
+        if (!player->getShot()) {
+            continue;
+        }
+
+        player->setShot();
+
+        const QMap<QString, QObject*> weapons = GameObjects::Instance().getWeapons();
+
+        if (!weapons.contains(weapon)) {
+            return;
+        }
+
+        Plazma* plazma = dynamic_cast<Plazma *>(weapons[weapon]);
+        Blaster* blaster = dynamic_cast<Blaster *>(weapons[weapon]);
+        MachineGun* machineGun = dynamic_cast<MachineGun *>(weapons[weapon]);
+
+        if (plazma) {
+            player->getShotTimer()->singleShot(plazma->RATE_OF_FIRE, player, &Player::setShot);
+        }
+
+        if (blaster) {
+            player->getShotTimer()->singleShot(blaster->RATE_OF_FIRE, player, &Player::setShot);
+        }
+
+        if (machineGun) {
+            player->getShotTimer()->singleShot(machineGun->RATE_OF_FIRE, player, &Player::setShot);
+        }
+
+        GameObjects::Instance().toBullets(idBullet,
+            QPointer<Bullet>(new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet)));
     }
 }
 
@@ -287,51 +300,6 @@ QString WorkJson::toJsonError(const QString& error)
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "error");
     dataJsonObj.insert("result", error);
-    QJsonDocument dataJsonDoc(dataJsonObj);
-    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
-
-    return data;
-}
-
-QString WorkJson::toJsonConnection(const QString& nickname,
-    const int idPlayer,
-    const QMap<QString, qreal> positionPlayer)
-{
-    QJsonObject dataJsonObj;
-    dataJsonObj.insert("method", "connection");
-    dataJsonObj.insert("nickname", nickname);
-    dataJsonObj.insert("id_player", idPlayer);
-    dataJsonObj.insert("pos_x", positionPlayer["x"]);
-    dataJsonObj.insert("pos_y", positionPlayer["y"]);
-    QJsonDocument dataJsonDoc(dataJsonObj);
-    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
-
-    return data;
-}
-
-QString WorkJson::toJsonDisconnection(const QString& nickname)
-{
-    QJsonObject dataJsonObj;
-    dataJsonObj.insert("method", "disconnection");
-    dataJsonObj.insert("nickname", nickname);
-    QJsonDocument dataJsonDoc(dataJsonObj);
-    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
-
-    return data;
-}
-
-QString WorkJson::toJsonRemove(const QString& nickname, const int id)
-{
-    if (cache_id == id) {
-        qDebug() << "Warning! Double removing bullet! Id:" << id;
-    }
-
-    cache_id = id;
-
-    QJsonObject dataJsonObj;
-    dataJsonObj.insert("method", "remove");
-    dataJsonObj.insert("nickname", nickname);
-    dataJsonObj.insert("id_bullet", id);
     QJsonDocument dataJsonDoc(dataJsonObj);
     QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
 

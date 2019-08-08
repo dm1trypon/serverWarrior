@@ -53,7 +53,7 @@ QMap<int, Bullet*> Animation::onDelBullets(QMap<int, Bullet*> bullets)
     foreach (delBullet, _delBullets) {
         bullets.remove(delBullet.second);
 
-        GameObjects::Instance().delBullets(delBullet.first, delBullet.second);
+        GameObjects::Instance().delBullets(delBullet.second);
     }
 
     _delBullets.clear();

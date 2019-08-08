@@ -27,6 +27,9 @@ private:
     WorkJson(const WorkJson& root) = delete;
     WorkJson& operator = (const WorkJson&) = delete;
 
+    void onNextShot(const QString &nickname, const QString &weapon, const QMap<QString, qreal> click,
+                    const QMap<QString, qreal> sizeBullet, const QMap<QString, Player *> players);
+
 public:
     WorkJson(){}
     static WorkJson& Instance();
@@ -34,12 +37,8 @@ public:
     QJsonValue parseJson(const QString &field, const QJsonObject dataJsonObj);
     QString toJsonVerify();
     QString toJsonError(const QString &error);
-    QString toJsonConnection(const QString &nickname, const int idPlayer, const QMap<QString, qreal> positionPlayer);
     QString toJsonObjects(QMap<QString, Player *> players, const QMap<int, Bullet *> bullets, const QMap<QString, Scene *> scene);
     void toSend(const QString &data);
-    QString toJsonDisconnection(const QString &nickname);
-
-    QString toJsonRemove(const QString &nickname, const int id);
     void onMethod(const QString &data, QWebSocket *pClient);
     QList <QWebSocket *> getClientsList();
 

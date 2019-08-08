@@ -58,6 +58,8 @@ void Server::processTextMessage(const QString &data)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
+    qDebug() << data;
+
     WorkJson::Instance().onMethod(data, pClient);
 }
 
@@ -109,6 +111,5 @@ void Server::socketDisconnected()
         WorkJson::Instance().setClientsList(clientsList);
     }
 
-    sendAll(WorkJson::Instance().toJsonDisconnection(nickname));
     qDebug() << "Done!";
 }

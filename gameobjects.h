@@ -37,7 +37,7 @@ public:
     void createScene();
     void setSizeScene(const QMap <QString, int> sizeScene);
     void toBullets(const int id, Bullet *bullet);
-    void delBullets(const QString &nickname, const int id);
+    void delBullets(const int id);
     void setSpeedPlayers(const qreal speedPlayers);
     void setLifePlayers(const int lifePlayers);
     void controlPlayers(const QString &nickname, const QString &key, const bool isHold);

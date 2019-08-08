@@ -114,12 +114,10 @@ void GameObjects::toBullets(const int id, Bullet *bullet)
     setSpeedMove(bullet);
 }
 
-void GameObjects::delBullets(const QString& nickname, const int id)
+void GameObjects::delBullets(const int id)
 {
     delete _bullets[id];
     _bullets.remove(id);
-
-    WorkJson::Instance().toSend(WorkJson::Instance().toJsonRemove(nickname, id));
 }
 
 int GameObjects::generateId()

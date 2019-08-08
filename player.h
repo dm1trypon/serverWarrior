@@ -40,6 +40,9 @@ public:
     qreal getRotate();
     const QMap <QString, qreal> getPosDisplay();
     void setInertSpeed(const QPointF coef);
+    void setIsShooting(const bool isShooting);
+    bool getIsShooting();
+
 private slots:
     void inertialBraking();
 
@@ -65,6 +68,7 @@ private:
     int _score = 0;
     int _id;
     bool _move = false;
+    bool _isShooting  = false;
     QTimer _speedTimer;
     QTimer *_shotTimer;
     QString _nickname;
