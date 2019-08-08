@@ -70,23 +70,28 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
 
     if (dataJsonObj.value("method") == "cursor") {
         const QString nickname = dataJsonObj.value("nickname").toString();
+
+        const qreal clickX = dataJsonObj.value("pos_x").toDouble();
+        const qreal clickY = dataJsonObj.value("pos_y").toDouble();
+
+        const bool isShot = dataJsonObj.value("is_shot").toBool();
         const QMap<QString, Player*> players = GameObjects::Instance().getPlayers();
 
         if (!players.contains(nickname)) {
             return;
         }
 
-        players[nickname]->setCursor(QPointF(dataJsonObj.value("pos_x").toDouble(),
-            dataJsonObj.value("pos_y").toDouble()));
+        players[nickname]->setCursor(QPointF(clickX, clickY));
 
-        return;
-    }
+        if (!isShot) {
+            return;
+        }
 
-    if (dataJsonObj.value("method") == "shot") {
-        const QString nickname = dataJsonObj.value("nickname").toString();
+        if (!dataJsonObj.contains("weapon")) {
+            qDebug() << "Wrong json, weapon prop of json object is not exist!";
 
-        const qreal clickX = dataJsonObj.value("x").toDouble();
-        const qreal clickY = dataJsonObj.value("y").toDouble();
+            return;
+        }
 
         const QString weapon = dataJsonObj.value("weapon").toString();
 
@@ -97,56 +102,58 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         QMap<QString, qreal> sizeBullet;
         sizeBullet.insert("width", 30);
         sizeBullet.insert("height", 30);
+        // IS SHOT?????
+        while (players[nickname]->getCursor() == QPointF(clickX, clickY)) {
+            const int idBullet = GameObjects::Instance().generateId();
 
-        const int idBullet = GameObjects::Instance().generateId();
+            Player* player = nullptr;
 
-        Player* player = nullptr;
+            if (GameObjects::Instance().getPlayers().contains(nickname)) {
+                player = GameObjects::Instance().getPlayers()[nickname];
+            }
 
-        if (GameObjects::Instance().getPlayers().contains(nickname)) {
-            player = GameObjects::Instance().getPlayers()[nickname];
+            if (!player) {
+                return;
+            }
+
+            const QMap<QString, qreal> sizePlayer = player->getSize();
+            const QMap<QString, qreal> positionPlayer = player->getPosition();
+
+            QMap<QString, qreal> positionPlayerCenter;
+            positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2 - sizeBullet["width"] / 2);
+            positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2 - sizeBullet["height"] / 2);
+
+            if (!player->getShot()) {
+                return;
+            }
+
+            player->setShot();
+
+            const QMap<QString, QObject*> weapons = GameObjects::Instance().getWeapons();
+
+            if (!weapons.contains(weapon)) {
+                return;
+            }
+
+            Plazma* plazma = dynamic_cast<Plazma *>(weapons[weapon]);
+            Blaster* blaster = dynamic_cast<Blaster *>(weapons[weapon]);
+            MachineGun* machineGun = dynamic_cast<MachineGun *>(weapons[weapon]);
+
+            if (plazma) {
+                player->getShotTimer()->singleShot(plazma->RATE_OF_FIRE, player, &Player::setShot);
+            }
+
+            if (blaster) {
+                player->getShotTimer()->singleShot(blaster->RATE_OF_FIRE, player, &Player::setShot);
+            }
+
+            if (machineGun) {
+                player->getShotTimer()->singleShot(machineGun->RATE_OF_FIRE, player, &Player::setShot);
+            }
+
+            GameObjects::Instance().toBullets(idBullet,
+                QPointer<Bullet>(new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet)));
         }
-
-        if (!player) {
-            return;
-        }
-
-        const QMap<QString, qreal> sizePlayer = player->getSize();
-        const QMap<QString, qreal> positionPlayer = player->getPosition();
-
-        QMap<QString, qreal> positionPlayerCenter;
-        positionPlayerCenter.insert("x", positionPlayer["x"] + sizePlayer["width"] / 2 - sizeBullet["width"] / 2);
-        positionPlayerCenter.insert("y", positionPlayer["y"] + sizePlayer["height"] / 2 - sizeBullet["height"] / 2);
-
-        if (!player->getShot()) {
-            return;
-        }
-
-        player->setShot();
-
-        const QMap<QString, QObject*> weapons = GameObjects::Instance().getWeapons();
-
-        if (!weapons.contains(weapon)) {
-            return;
-        }
-
-        Plazma* plazma = dynamic_cast<Plazma *>(weapons[weapon]);
-        Blaster* blaster = dynamic_cast<Blaster *>(weapons[weapon]);
-        MachineGun* machineGun = dynamic_cast<MachineGun *>(weapons[weapon]);
-
-        if (plazma) {
-            player->getShotTimer()->singleShot(plazma->RATE_OF_FIRE, player, &Player::setShot);
-        }
-
-        if (blaster) {
-            player->getShotTimer()->singleShot(blaster->RATE_OF_FIRE, player, &Player::setShot);
-        }
-
-        if (machineGun) {
-            player->getShotTimer()->singleShot(machineGun->RATE_OF_FIRE, player, &Player::setShot);
-        }
-
-        GameObjects::Instance().toBullets(idBullet,
-            QPointer<Bullet>(new Bullet(positionPlayerCenter, sizeBullet, click, nickname, weapon, idBullet)));
 
         return;
     }
