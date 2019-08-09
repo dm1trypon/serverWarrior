@@ -32,16 +32,6 @@ const QMap <QString, qreal> Player::getPosDisplay()
     return _posDisplay;
 }
 
-void Player::setIsShooting(const bool isShooting)
-{
-    _isShooting = isShooting;
-}
-
-bool Player::getIsShooting()
-{
-    return _isShooting;
-}
-
 void Player::setShot()
 {
     if (!_isShot)

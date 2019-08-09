@@ -27,8 +27,8 @@ private:
     WorkJson(const WorkJson& root) = delete;
     WorkJson& operator = (const WorkJson&) = delete;
 
-    void onNextShot(const QString &nickname, const QString &weapon, const QMap<QString, qreal> click,
-                    const QMap<QString, qreal> sizeBullet, const QMap<QString, Player *> players);
+    void onShot(const QString &nickname, const QString &weapon, const QMap<QString, qreal> click,
+                    const QMap<QString, qreal> sizeBullet);
 
 public:
     WorkJson(){}
