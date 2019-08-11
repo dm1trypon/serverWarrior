@@ -75,6 +75,8 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
 
         const qreal clickX = dataJsonObj.value("pos_x").toDouble();
         const qreal clickY = dataJsonObj.value("pos_y").toDouble();
+        const qreal offsetX = dataJsonObj.value("offset_x").toDouble();
+        const qreal offsetY = dataJsonObj.value("offset_y").toDouble();
 
         const bool isShot = dataJsonObj.value("is_shot").toBool();
         const QMap<QString, Player*> players = GameObjects::Instance().getPlayers();
@@ -98,8 +100,8 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         const QString &weapon = dataJsonObj.value("weapon").toString();
 
         QMap<QString, qreal> click;
-        click.insert("x", clickX);
-        click.insert("y", clickY);
+        click.insert("x", offsetX);
+        click.insert("y", offsetY);
 
         QMap<QString, qreal> sizeBullet;
         sizeBullet.insert("width", 30);

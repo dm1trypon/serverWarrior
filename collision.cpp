@@ -105,7 +105,7 @@ bool Collision::checkCollisionBullets(Bullet *bullet,
         enemyPlayer->onDamage(bullet->getDamage());
 
         if (enemyPlayer->getLife() > 0) {
-
+            continue;
         }
 
         enemyPlayer->resetLife();
@@ -115,6 +115,8 @@ bool Collision::checkCollisionBullets(Bullet *bullet,
         }
 
         players[nicknameBullet]->setScore();
+
+        break;
     }
 
     foreach (Bullet *enemyBullet, bullets) {
