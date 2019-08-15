@@ -60,6 +60,14 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
         return;
     }
 
+    if (dataJsonObj.value("method") == "ping") {
+        QJsonDocument dataJsonDoc(dataJsonObj);
+
+        toSend(dataJsonDoc.toJson(QJsonDocument::Compact));
+
+        return;
+    }
+
     if (dataJsonObj.value("method") == "control") {
         const QString nickname = dataJsonObj.value("nickname").toString();
         const QString key = dataJsonObj.value("key").toString();
