@@ -10,7 +10,7 @@ public:
     Plazma(QObject *parent = nullptr) : QObject(parent){}
 
 public:
-    const double M_SPEED = 16; // bullet's speed
+    const double M_SPEED = 30; // bullet's speed
     const int M_DAMAGE = 17; // bullet's damage
     const int M_TIME_LIFE = 2000; // bullet's time life
     const int RATE_OF_FIRE = 600; // bullet's rate of fire
@@ -24,7 +24,7 @@ public:
     MachineGun(QObject *parent = nullptr) : QObject(parent){}
 
 public:
-    const double M_SPEED = 16; // bullet's speed
+    const double M_SPEED = 25; // bullet's speed
     const int M_DAMAGE = 3; // bullet's damage
     const int M_TIME_LIFE = 1100; // bullet's time life
     const int RATE_OF_FIRE = 40; // bullet's rate of fire
