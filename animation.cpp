@@ -132,12 +132,11 @@ void Animation::onPlayers(const QMap<QString, Player*> players, const QMap<QStri
 
         player->setPosition(newPosition);
 
-        if (_collision.checkCollisionPlayers(player, players)) {
-            QMap<QString, qreal> newPosition;
-            newPosition.insert("x", position["x"] - speed["speed_x"] + horizontal);
-            newPosition.insert("y", position["y"] - speed["speed_y"] + vertical);
-            player->setPosition(newPosition);
+        if (!_collision.checkCollisionPlayers(player, players)) {
+            return;
         }
+
+        player->setInertSpeed(QPointF(-1, -1));
     }
 }
 
