@@ -58,8 +58,6 @@ void Server::processTextMessage(const QString &data)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
-    qDebug() << data;
-
     WorkJson::Instance().onMethod(data, pClient);
 }
 
@@ -104,12 +102,14 @@ void Server::socketDisconnected()
 
     GameObjects::Instance().toPlayers(nickname, players[nickname], REMOVE);
 
-    if (pClient) {
-        QList <QWebSocket *> clientsList = WorkJson::Instance().getClientsList();
-        clientsList.removeAll(pClient);
-        pClient->deleteLater();
-        WorkJson::Instance().setClientsList(clientsList);
+    if (!pClient) {
+        return;
     }
+
+    QList <QWebSocket *> clientsList = WorkJson::Instance().getClientsList();
+    clientsList.removeAll(pClient);
+    pClient->deleteLater();
+    WorkJson::Instance().setClientsList(clientsList);
 
     qDebug() << "Done!";
 }
