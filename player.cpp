@@ -106,6 +106,12 @@ void Player::setInertSpeed(const QPointF coef)
     _speedY = _speedY * coef.y();
 }
 
+void Player::setSpeed(const QMap <QString, qreal> speed)
+{
+    _speedX = speed["speed_x"];
+    _speedY = speed["speed_y"];
+}
+
 void Player::inertialBraking()
 {
     if (_maxSpeedX > 0.0 && _speedX < _maxSpeed)

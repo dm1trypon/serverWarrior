@@ -41,6 +41,7 @@ public:
     const QMap <QString, qreal> getPosDisplay();
     void setInertSpeed(const QPointF coef);
 
+    void setSpeed(const QMap<QString, qreal> speed);
 private slots:
     void inertialBraking();
 
