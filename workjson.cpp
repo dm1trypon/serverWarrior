@@ -55,7 +55,7 @@ void WorkJson::onMethod(const QString& data, QWebSocket* pClient)
             new Player(positionPlayer, posDisplay, sizePlayer, nickname, idPlayer), APPEND);
 
         toSend(toJsonObjects(GameObjects::Instance().getPlayers(), GameObjects::Instance().getBullets(),
-            GameObjects::Instance().getScene()));
+            GameObjects::Instance().getWalls(), GameObjects::Instance().getScene()));
 
         return;
     }
@@ -219,6 +219,7 @@ QString WorkJson::toJsonVerify()
 
 QString WorkJson::toJsonObjects(const QMap<QString, Player*> players,
     const QMap<int, Bullet*> bullets,
+    const QMap<int, Wall*> walls,
     const QMap<QString, Scene*> scene)
 {
     QJsonObject dataJsonObj;
@@ -226,6 +227,7 @@ QString WorkJson::toJsonObjects(const QMap<QString, Player*> players,
 
     QJsonArray playersJsonArr;
     QJsonArray bulletsJsonArr;
+    QJsonArray wallsJsonArr;
 
     foreach (Player* player, players) {
         QJsonObject playerJsonObj;
@@ -279,6 +281,27 @@ QString WorkJson::toJsonObjects(const QMap<QString, Player*> players,
     }
 
     dataJsonObj.insert("bullets", bulletsJsonArr);
+
+    foreach (Wall* wall, walls) {
+        if (!wall) {
+            continue;
+        }
+
+        QJsonObject wallJsonObj;
+        wallJsonObj.insert("id_wall", wall->getId());
+
+        QMap<QString, qreal> position = wall->getPosition();
+        wallJsonObj.insert("pos_x", position["x"]);
+        wallJsonObj.insert("pos_y", position["y"]);
+
+        QMap<QString, qreal> size = wall->getSize();
+        wallJsonObj.insert("width", size["width"]);
+        wallJsonObj.insert("height", size["height"]);
+
+        wallsJsonArr.append(wallJsonObj);
+    }
+
+    dataJsonObj.insert("walls", wallsJsonArr);
 
     QJsonObject sceneJsonObj;
 

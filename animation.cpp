@@ -8,6 +8,7 @@
 Animation::Animation(QObject* parent)
     : QObject(parent)
 {
+    connect(&_generateWall, &QTimer::timeout, this, &Animation::onGenerateWall);
     connect(&_animationTimer, &QTimer::timeout, this, &Animation::process);
 }
 
@@ -15,12 +16,19 @@ void Animation::start()
 {
     qDebug() << "Start animation...";
     _animationTimer.start(FPS);
+    _generateWall.start(2000);
 }
 
 void Animation::stop()
 {
     qDebug() << "Stop animation...";
     _animationTimer.stop();
+    _generateWall.stop();
+}
+
+void Animation::onGenerateWall()
+{
+    GameObjects::Instance().createWall();
 }
 
 void Animation::process()
@@ -31,19 +39,19 @@ void Animation::process()
         return;
     }
 
+    const QMap<int, Wall*> walls = GameObjects::Instance().getWalls();
     const QMap<QString, Scene*> scene = GameObjects::Instance().getScene();
-
 
     QMap<int, Bullet*> bullets = GameObjects::Instance().getBullets();
 
     onPlayers(players, scene);
-    onBullets(bullets, players, scene);
+    onBullets(bullets, players, walls, scene);
 
     if (!_delBullets.isEmpty()) {
         bullets = onDelBullets(bullets);
     }
 
-    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), bullets, scene));
+    WorkJson::Instance().toSend(WorkJson::Instance().toJsonObjects(GameObjects::Instance().getPlayers(), bullets, walls, scene));
 }
 
 QMap<int, Bullet*> Animation::onDelBullets(QMap<int, Bullet*> bullets)
@@ -63,6 +71,7 @@ QMap<int, Bullet*> Animation::onDelBullets(QMap<int, Bullet*> bullets)
 
 void Animation::onBullets(const QMap<int, Bullet*> bullets,
     const QMap<QString, Player*> players,
+    const QMap<int, Wall*> walls,
     const QMap<QString, Scene*> scene)
 {
     foreach (Bullet* bullet, bullets) {
@@ -84,7 +93,7 @@ void Animation::onBullets(const QMap<int, Bullet*> bullets,
             continue;
         }
 
-        if (_collision.checkCollisionBullets(bullet, GameObjects::Instance().getBullets(), players, scene)) {
+        if (_collision.checkCollisionBullets(bullet, GameObjects::Instance().getBullets(), players, walls, scene)) {
             if (bullet->getHealth() > 0) {
                 return;
             }

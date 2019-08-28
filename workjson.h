@@ -3,6 +3,7 @@
 
 #include "player.h"
 #include "bullet.h"
+#include "wall.h"
 #include "scene.h"
 #include "control.h"
 
@@ -37,7 +38,7 @@ public:
     QJsonValue parseJson(const QString &field, const QJsonObject dataJsonObj);
     QString toJsonVerify();
     QString toJsonError(const QString &error);
-    QString toJsonObjects(QMap<QString, Player *> players, const QMap<int, Bullet *> bullets, const QMap<QString, Scene *> scene);
+    QString toJsonObjects(QMap<QString, Player *> players, const QMap<int, Bullet *> bullets, const QMap<int, Wall *> walls, const QMap<QString, Scene *> scene);
     void toSend(const QString &data);
     void onMethod(const QString &data, QWebSocket *pClient);
     QList <QWebSocket *> getClientsList();

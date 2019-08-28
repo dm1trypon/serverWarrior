@@ -61,6 +61,19 @@ void GameObjects::createScene()
     createWeapons();
 }
 
+void GameObjects::createWall()
+{
+    const QMap<QString, qreal> position = generateXY();
+
+    QMap<QString, qreal> size;
+    size.insert("width", 50);
+    size.insert("height", 50);
+
+    const int idWall = generateId();
+
+    _walls.insert(idWall, new Wall(position, size, idWall));
+}
+
 void GameObjects::createWeapons()
 {
     if (!_weapons.isEmpty()) {
@@ -116,20 +129,34 @@ void GameObjects::toBullets(const int id, Bullet *bullet)
 
 void GameObjects::delBullets(const int id)
 {
-    delete _bullets[id];
+    _bullets[id]->deleteLater();
     _bullets.remove(id);
+}
+
+void GameObjects::delWall(const int id)
+{
+    if (!_walls.contains(id)) {
+        qDebug() << "Wall object is not found. Wall id:" << id;
+
+        return;
+    }
+
+    _walls[id]->deleteLater();
+    _walls.remove(id);
 }
 
 int GameObjects::generateId()
 {
-    return qrand() % (999999 - 100000) + 100000;;
+    return qrand() % (999999 - 100000) + 100000;
 }
 
 QMap<QString, qreal> GameObjects::generateXY()
 {
+    const QMap<QString, qreal> sceneSize = _scene["scene"]->getSize();
+
     QMap<QString, qreal> posXY;
-    posXY.insert("x", qrand() % (1000 - 1) + 1);
-    posXY.insert("y", qrand() % (1000 - 1) + 1);
+    posXY.insert("x", qrand() % (static_cast<int>(sceneSize["width"]) - 100) + 1);
+    posXY.insert("y", qrand() % (static_cast<int>(sceneSize["height"]) - 100) + 1);
 
     return posXY;
 }
@@ -159,6 +186,11 @@ QMap<int, Bullet*> GameObjects::getBullets()
     return _bullets;
 }
 
+QMap<int, Wall*> GameObjects::getWalls()
+{
+    return _walls;
+}
+
 QMap<QString, Player*> GameObjects::getPlayers()
 {
     return _players;
@@ -172,5 +204,11 @@ QMap<QString, Scene*> GameObjects::getScene()
 void GameObjects::clearList()
 {
     qDeleteAll(_players.begin(), _players.end());
+    qDeleteAll(_scene.begin(), _scene.end());
+    qDeleteAll(_bullets.begin(), _bullets.end());
+    qDeleteAll(_walls.begin(), _walls.end());
     _players.clear();
+    _scene.clear();
+    _bullets.clear();
+    _walls.clear();
 }

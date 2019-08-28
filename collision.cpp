@@ -1,4 +1,5 @@
 #include "collision.h"
+#include "gameobjects.h"
 
 #include <QtMath>
 #include <QDebug>
@@ -66,6 +67,7 @@ bool Collision::checkCollisionPlayers(Player *player, const QMap <QString, Playe
 bool Collision::checkCollisionBullets(Bullet *bullet,
                                       const QMap <int, Bullet *> bullets,
                                       const QMap <QString, Player *> players,
+                                      const QMap <int, Wall *> walls,
                                       const QMap <QString, Scene *> scene)
 {
     const QMap <QString, qreal> sizeBullet = bullet->getSize();
@@ -142,6 +144,34 @@ bool Collision::checkCollisionBullets(Bullet *bullet,
 
         enemyBullet->setHealth(bullet->getDamage());
         bullet->setHealth(enemyBullet->getDamage());
+
+        collision = true;
+    }
+
+    foreach (Wall *wall, walls) {
+        if (!wall) {
+            continue;
+        }
+
+        QMap <QString, qreal> sizeWall = wall->getSize();
+
+        QMap <QString, qreal> posWall = wall->getPosition();
+        posWall["x"] = posWall["x"] + sizeWall["width"] / 2;
+        posWall["y"] = posWall["y"] + sizeWall["height"] / 2;
+
+        if ((posWall["x"] + sizeWall["width"] / 2 < positionBullet["x"] - sizeBullet["width"] / 2) ||
+            (posWall["x"] - sizeWall["width"] / 2 > positionBullet["x"] + sizeBullet["width"] / 2) ||
+            (posWall["y"] + sizeWall["height"] / 2 < positionBullet["y"] - sizeBullet["height"] / 2) ||
+            (posWall["y"] - sizeWall["height"] / 2 > positionBullet["y"] + sizeBullet["height"] / 2)) {
+            continue;
+        }
+
+        wall->setHealth(bullet->getDamage());
+        bullet->setHealth(wall->getDamage());
+
+        if (wall->getHealth() < 0) {
+            GameObjects::Instance().delWall(wall->getId());
+        }
 
         collision = true;
     }

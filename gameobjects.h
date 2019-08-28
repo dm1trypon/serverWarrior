@@ -6,6 +6,7 @@
 #include "weapons.h"
 #include "scene.h"
 #include "workjson.h"
+#include "wall.h"
 
 #include <QObject>
 #include <QMap>
@@ -30,6 +31,7 @@ public:
     QMap <QString, Player *> setPlayers(QMap <QString, Player *> players);
     QMap <QString, Scene *> getScene();
     QMap <int, Bullet *> getBullets();
+    QMap<int, Wall *> getWalls();
     QMap<QString, QObject *> getWeapons();
 
     void toPlayers(const QString &nickname, Player *player, const bool operation);
@@ -41,7 +43,9 @@ public:
     void setSpeedPlayers(const qreal speedPlayers);
     void setLifePlayers(const int lifePlayers);
     void controlPlayers(const QString &nickname, const QString &key, const bool isHold);
+    void createWall();
 
+    void delWall(const int id);
 private:
     GameObjects(const GameObjects& root) = delete;
     GameObjects& operator = (const GameObjects&) = delete;
@@ -51,6 +55,7 @@ private:
 
     QMap <QString, Player *> _players;
     QMap <int, Bullet*> _bullets;
+    QMap <int, Wall*> _walls;
     QMap <QString, Scene *> _scene;
     QMap <QString, int> _sizeScene;
     QMap <QString, QObject *> _weapons;

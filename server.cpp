@@ -63,6 +63,8 @@ void Server::processTextMessage(const QString &data)
 
 void Server::sendAll(const QString &data)
 {
+    qDebug().noquote() << "[SEND]:" << data;
+
     foreach(QWebSocket* client, WorkJson::Instance().getClientsList()) {
         client->sendTextMessage(data);
     }

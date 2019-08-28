@@ -9,6 +9,7 @@
 
 class Player;
 class Bullet;
+class Wall;
 
 class Animation : public QObject
 {
@@ -21,6 +22,7 @@ public:
 
 private slots:
     void process();
+    void onGenerateWall();
 
 private:
     const int FPS = 17;
@@ -29,10 +31,12 @@ private:
 
     Collision _collision;
     QTimer _animationTimer;
+    QTimer _generateWall;
     QList<QPair<QString, int> > _delBullets;
 
     void onPlayers(const QMap <QString, Player *> players, const QMap <QString, Scene *> scene);
     void onBullets(const QMap <int, Bullet *> bullets, const QMap <QString, Player *> players,
+                   const QMap<int, Wall *> walls,
                    const QMap <QString, Scene *> scene);
 
     void playerRotation(Player *player);
